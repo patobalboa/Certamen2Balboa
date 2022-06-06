@@ -67,6 +67,9 @@ public class MainActivity extends AppCompatActivity {
         }else if(id== R.id.actionPlantas){
             startActivity(new Intent(this,activityPlantas.class));
             return true;
+        }else if(id== R.id.actionRecoleccion){
+            startActivity(new Intent(this,activityRecoleccion.class));
+            return true;
         }
 
         return super.onOptionsItemSelected(item);

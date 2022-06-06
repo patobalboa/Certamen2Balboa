@@ -11,4 +11,8 @@
         android:id="@+id/actionPlantas"
         android:orderInCategory="101"
         android:title="Plantas" />
+    <item
+        android:id="@+id/actionRecoleccion"
+        android:orderInCategory="102"
+        android:title="Recolección" />
 </menu>
