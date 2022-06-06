@@ -3,8 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="cl.codelab.certamen2balboa.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/ActionCientifico"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="Cientificos"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/ActionPlantas"
+        android:orderInCategory="101"
+        android:title="Plantas"
         app:showAsAction="never" />
 </menu>
