@@ -1,0 +1,14 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="cl.codelab.certamen2balboa.MainActivity">
+    <item
+        android:id="@+id/actionCientifico"
+        android:orderInCategory="100"
+        android:title="Cientificos"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/actionPlantas"
+        android:orderInCategory="101"
+        android:title="Plantas" />
+</menu>
