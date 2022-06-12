@@ -13,6 +13,13 @@ public class Plantas {
     private byte[] foto;
     private String uso;
 
+    public Plantas(int id, String nombre_p, String nombre_cientifico_planta, String uso) {
+        this.id = id;
+        this.nombre_p = nombre_p;
+        this.nombre_cientifico_planta = nombre_cientifico_planta;
+        this.uso = uso;
+    }
+
     public Plantas() {
     }
 
@@ -62,5 +69,9 @@ public class Plantas {
 
     public void setUso(String uso) {
         this.uso = uso;
+    }
+
+    public String toString(){
+        return nombre_p;
     }
 }

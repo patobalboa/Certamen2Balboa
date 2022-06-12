@@ -16,6 +16,8 @@ import android.provider.MediaStore;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -23,6 +25,8 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
+
+import java.util.ArrayList;
 
 
 /**
@@ -100,6 +104,87 @@ public class PlantasF extends Fragment{
         tomafoto = viewp.findViewById(R.id.btnTomarFotoP);
         manplanta = new BDBalboa(getContext());
         act_camara = getActivity();
+        agregarp.setEnabled(true);
+        eliminarp.setEnabled(false);
+        modificarp.setEnabled(false);
+
+        listaPlantas();
+        agregarp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idp.getText().toString().isEmpty() || nombrep.toString().isEmpty()|| nomcientp.toString().isEmpty() || usop.toString().isEmpty()){
+                    Toast.makeText(getContext(), "Debe rellenar todos los campos", Toast.LENGTH_LONG).show();
+                }else{
+
+                    int id = Integer.parseInt(idp.getText().toString());
+                    if (manplanta.addPlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
+                        Toast.makeText(getContext(), "La planta se añadió con exito", Toast.LENGTH_LONG).show();
+                        listaPlantas();
+                    } else {
+                        Toast.makeText(getContext(), "No se pudo agregar", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
+        eliminarp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int id = Integer.parseInt(idp.getText().toString());
+                if (manplanta.deleteCientifico(id)) {
+                    Toast.makeText(getContext(), "La planta fue Borrada", Toast.LENGTH_LONG).show();
+                    listaPlantas();
+                } else {
+
+                    Toast.makeText(getContext(), "El id no existe", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        buscarp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idp.getText().toString().isEmpty()){
+                    Toast.makeText(getContext(), "Debe colocar un ID", Toast.LENGTH_LONG).show();
+                }else {
+                    int id = Integer.parseInt(idp.getText().toString());
+
+                    Plantas dato = manplanta.getPlantas(id);
+
+                    String ruts = String.valueOf(id);
+                    if (dato == null) {
+
+                        agregarp.setEnabled(true);
+                        eliminarp.setEnabled(false);
+                        modificarp.setEnabled(false);
+                        Toast.makeText(getContext(), "El ID "+ruts+" no existe", Toast.LENGTH_LONG).show();
+                    } else {
+                        agregarp.setEnabled(false);
+                        eliminarp.setEnabled(true);
+                        modificarp.setEnabled(true);
+                        nombrep.setText(dato.getNombre_p());
+                        nomcientp.setText(dato.getNombre_cientifico_planta());
+                        usop.setText(dato.getUso());
+                    }
+                }
+
+            }
+        });
+        modificarp.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idp.getText().toString().isEmpty() || nombrep.toString().isEmpty()|| nomcientp.toString().isEmpty() || usop.toString().isEmpty()){
+                    Toast.makeText(getContext(), "Debe rellenar todos los campos", Toast.LENGTH_LONG).show();
+                }else{
+
+                    int id = Integer.parseInt(idp.getText().toString());
+                    if (manplanta.updateCientifico(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
+                        Toast.makeText(getContext(), "La planta se modificó con exito", Toast.LENGTH_LONG).show();
+                        listaPlantas();
+                    } else {
+                        Toast.makeText(getContext(), "No se pudo modificar", Toast.LENGTH_LONG).show();
+                    }
+                }
+            }
+        });
 
 
         tomafoto.setOnClickListener(new View.OnClickListener() {
@@ -123,6 +208,8 @@ public class PlantasF extends Fragment{
 
 
 
+
+
         return viewp;
     }
     public void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -136,6 +223,33 @@ public class PlantasF extends Fragment{
             Toast.makeText(getContext(), "capturamos foto", Toast.LENGTH_LONG).show();
 
         }
+    }
+    public void listaPlantas(){
+
+        ArrayList<Plantas> lista = manplanta.getListPlantas();
+        if(!lista.isEmpty()){
+            ArrayAdapter<Plantas> adapter = new ArrayAdapter<Plantas>(getContext(), android.R.layout.simple_list_item_1, lista);
+            lvPlantas.setAdapter(adapter);
+            lvPlantas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    agregarp.setEnabled(false);
+                    eliminarp.setEnabled(true);
+                    modificarp.setEnabled(true);
+                    Plantas p = lista.get(i);
+                    int rutitem = p.getId();
+                    String rutET = String.valueOf(rutitem);
+                    idp.setText(rutET);
+                    nombrep.setText(p.getNombre_p());
+                    nomcientp.setText(p.getNombre_cientifico_planta());
+                    usop.setText(p.getUso());
+
+
+                }
+
+            });
+        }
+
     }
 
 

@@ -158,7 +158,7 @@ public class BDBalboa extends SQLiteOpenHelper {
     }
 
     // Manejadores Plantas
-    public boolean addPlantas(int idplanta, String nombre_p, String nombre_cientifico_planta, byte[] foto, String uso_p){
+    public boolean addPlantas(int idplanta, String nombre_p, String nombre_cientifico_planta, String uso_p){
         boolean sw1 = true;
         SQLiteDatabase db= getWritableDatabase();
 
@@ -167,7 +167,7 @@ public class BDBalboa extends SQLiteOpenHelper {
             valores.put("_idplanta", idplanta);
             valores.put("nombre_p", nombre_p);
             valores.put("nombre_cientifico_planta",nombre_cientifico_planta);
-            valores.put("foto",foto);
+            //valores.put("foto",foto);
             valores.put("uso_p",uso_p);
 
             try{
@@ -184,19 +184,36 @@ public class BDBalboa extends SQLiteOpenHelper {
 
         return sw1;
     }
-    public Plantas getPlantas(String nom){
+    public ArrayList<Plantas> getListPlantas(){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM PlantasBalboa ORDER by nombre_p DESC",null);
+        ArrayList <Plantas> lista = new ArrayList<Plantas>();
+        try{
+
+            while(c.moveToNext()) {
+                Plantas datos = new Plantas(c.getInt(0),c.getString(1),c.getString(2), c.getBlob(3),c.getString(4));
+                lista.add(datos);
+
+            }
+            c.close();
+            return lista;
+        }catch (Exception e){
+            return null;
+        }
+    }
+    public Plantas getPlantas(int id){
         SQLiteDatabase db = getReadableDatabase();
         Plantas datos= new Plantas();
         try{
-            Cursor c = db.rawQuery("SELECT * FROM PlantasBalboa WHERE nombre_p="+nom+"",null);
+            Cursor c = db.rawQuery("SELECT * FROM PlantasBalboa WHERE _idplanta="+id+"",null);
             if(c.moveToFirst()){
                 //byte[] bytes = c.getBlob(c.getColumnIndex("IMAGEN"));
                 datos = new Plantas(c.getInt(0),c.getString(1),c.getString(2), c.getBlob(3),c.getString(4));
-                this.close();
+
                 c.close();
                 return datos;
             }else{
-                this.close();
+
                 c.close();
                 return null;
             }
