@@ -11,6 +11,8 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import java.util.ArrayList;
+
 public class BDBalboa extends SQLiteOpenHelper {
 
 
@@ -21,6 +23,7 @@ public class BDBalboa extends SQLiteOpenHelper {
     public BDBalboa(Context context){
         super(context, NOMBRE_BASEDATOS, null, VERSION_BASEDATOS);
     }
+
 
 
 
@@ -59,18 +62,38 @@ public class BDBalboa extends SQLiteOpenHelper {
             }
 
         }else {
-            onCreate(db);
+            sw1=false;
+
+            this.onCreate(db);
         }
 
         return sw1;
     }
-    public Cientifico getCientifico(String nom){
+    public ArrayList<Cientifico> getListCientifico(){
+        SQLiteDatabase db = getReadableDatabase();
+        Cursor c = db.rawQuery("SELECT * FROM CientificoBalboa ORDER by nombre DESC",null);
+        ArrayList <Cientifico> lista = new ArrayList<Cientifico>();
+        try{
+
+            while(c.moveToNext()) {
+                Cientifico datos = new Cientifico(c.getInt(0), c.getString(1), c.getString(2), c.getString(3));
+                lista.add(datos);
+
+            }
+            c.close();
+            return lista;
+        }catch (Exception e){
+            return null;
+        }
+    }
+
+    public Cientifico getCientifico(int rut){
         SQLiteDatabase db = getReadableDatabase();
         Cientifico datos= new Cientifico();
         try{
-            Cursor c = db.rawQuery("SELECT * FROM CientificoBalboa WHERE nombre="+nom+"",null);
+            Cursor c = db.rawQuery("SELECT * FROM CientificoBalboa WHERE nombre='"+rut+"'",null);
             if(c.moveToFirst()){
-                //byte[] bytes = c.getBlob(c.getColumnIndex("IMAGEN"));
+
                 datos = new Cientifico(c.getInt(0),c.getString(1),c.getString(2), c.getString(3));
                 this.close();
                 c.close();

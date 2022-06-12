@@ -14,19 +14,11 @@
         android:theme="@style/Theme.Certamen2Balboa"
         tools:targetApi="31">
         <activity
-            android:name=".activityRecoleccion"
-            android:exported="false" />
-        <activity
-            android:name=".activityPlantas"
-            android:exported="false" />
-        <activity
-            android:name=".activityCientifico"
+            android:name=".CientificoActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Certamen2Balboa.NoActionBar">
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

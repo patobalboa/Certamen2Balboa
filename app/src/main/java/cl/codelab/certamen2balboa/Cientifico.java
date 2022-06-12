@@ -5,11 +5,14 @@
 
 package cl.codelab.certamen2balboa;
 
+import java.util.List;
+
 public class Cientifico {
     private int rut;
     private String nombre;
     private String apellido;
     private String sexo;
+
 
     public Cientifico() {
     }
@@ -51,5 +54,10 @@ public class Cientifico {
 
     public void setSexo(String sexo) {
         this.sexo = sexo;
+    }
+
+    @Override
+    public String toString(){
+        return rut + "   "+ nombre +" "+ apellido;
     }
 }
