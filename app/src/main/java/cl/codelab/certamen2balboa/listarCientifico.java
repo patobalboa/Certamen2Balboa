@@ -1,5 +1,7 @@
 package cl.codelab.certamen2balboa;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -7,6 +9,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -63,6 +66,8 @@ public class listarCientifico extends Fragment {
     View view;
     ListView lvCientifico;
     Button refrescar;
+    int itemRut;
+    String  itemNombre, itemApellido, itemSexo;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -78,7 +83,9 @@ public class listarCientifico extends Fragment {
             }
         });
         listaCientifico();
+
         return view;
+
     }
     public void listaCientifico(){
         BDBalboa maneja = new BDBalboa(getContext());
@@ -86,6 +93,34 @@ public class listarCientifico extends Fragment {
         if(!lista.isEmpty()){
             ArrayAdapter<Cientifico> adapter = new ArrayAdapter<Cientifico>(getContext(), android.R.layout.simple_list_item_1, lista);
             lvCientifico.setAdapter(adapter);
+            lvCientifico.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Cientifico p = lista.get(i);
+                    itemRut = p.getRut();
+                    itemNombre = p.getNombre();
+                    itemApellido = p.getApellido();
+                    itemSexo = p.getSexo();
+
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("Cientifico")
+                            .setMessage(itemRut+"\n"+itemNombre+" "+itemApellido+"\n Sexo: "+itemSexo)
+                            .setNeutralButton("Borrar", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    maneja.deleteCientifico(itemRut);
+                                    dialogInterface.cancel();
+                                    Toast.makeText(getContext(),"Cientifico Borrado", Toast.LENGTH_LONG).show();
+                                }
+                            }).setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+                                    dialogInterface.cancel();
+                                }
+                            }).show();
+                }
+            });
+
         }
     }
 }

@@ -5,6 +5,8 @@
 
 package cl.codelab.certamen2balboa;
 
+import androidx.annotation.NonNull;
+
 import java.util.List;
 
 public class Cientifico {
@@ -56,8 +58,9 @@ public class Cientifico {
         this.sexo = sexo;
     }
 
+
     @Override
     public String toString(){
-        return rut + "   "+ nombre +" "+ apellido;
+        return nombre +" "+ apellido;
     }
 }
