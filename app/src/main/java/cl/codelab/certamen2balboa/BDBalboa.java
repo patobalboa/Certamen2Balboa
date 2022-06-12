@@ -370,7 +370,7 @@ public class BDBalboa extends SQLiteOpenHelper {
             //valores.put("_idplanta", idplanta);
             //valores.put("_rut",rut);
             //valores.put("foto_lugar",foto_lugar);
-            valores.put("comentario",comentario);
+            valores.put("comment",comentario);
             valores.put("localizacion",localizacion);
             try{
                 String[] args= new String[]{String.valueOf(id)};
