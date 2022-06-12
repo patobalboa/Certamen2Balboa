@@ -18,6 +18,13 @@ public class Recoleccion {
     public Recoleccion() {
     }
 
+    public Recoleccion(int id, String fecha, String comentario, String localizacion) {
+        this.id = id;
+        this.fecha = fecha;
+        this.comentario = comentario;
+        this.localizacion = localizacion;
+    }
+
     public Recoleccion(int id, String fecha, int cod_planta, int cod_cientifico, String comentario, byte[] foto_lugar, String localizacion) {
         this.id = id;
         this.fecha = fecha;
@@ -82,5 +89,9 @@ public class Recoleccion {
 
     public void setLocalizacion(String localizacion) {
         this.localizacion = localizacion;
+    }
+
+    public String toString(){
+        return fecha +" "+ localizacion;
     }
 }

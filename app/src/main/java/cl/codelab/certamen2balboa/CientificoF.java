@@ -109,7 +109,7 @@ public class CientificoF extends Fragment {
          ArrayAdapter adapterArr = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item, sexoList);
          spinner.setAdapter(adapterArr);
          spinner.setSelection(0);
-         buscaCientifico();
+
 
         //Botones CIENTIFICO
         agregar.setOnClickListener(new View.OnClickListener() {
@@ -192,24 +192,15 @@ public class CientificoF extends Fragment {
                 }
             }
         });
-
-
-
-
-
-
-
         return view;
     }
-    public void buscaCientifico(){
 
-    }
     public void listaCientifico(){
 
         ArrayList<Cientifico> lista = maneja.getListCientifico();
         if(!lista.isEmpty()){
-            ArrayAdapter<Cientifico> adapter = new ArrayAdapter<Cientifico>(getContext(), android.R.layout.simple_list_item_1, lista);
-            lvCientifico.setAdapter(adapter);
+            ArrayAdapter<Cientifico> adapter2 = new ArrayAdapter<Cientifico>(getContext(), android.R.layout.simple_list_item_1, lista);
+            lvCientifico.setAdapter(adapter2);
             lvCientifico.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
                 public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {

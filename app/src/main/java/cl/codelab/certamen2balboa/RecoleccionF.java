@@ -1,12 +1,29 @@
 package cl.codelab.certamen2balboa;
 
+import android.app.Activity;
+import android.content.Context;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.Toast;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -55,10 +72,181 @@ public class RecoleccionF extends Fragment {
         }
     }
 
+    View view;
+
+    BDBalboa maneja;
+    EditText idR, fechaR, comementR, localR;
+    Spinner spPlanta, spCientifico;
+    ImageView fotolugarR;
+    Button buscarR, btnFotoR, addR, eliminarR, modificarR;
+    String datoSpC;
+    ArrayList<String> listadoCientifico;
+    ArrayList<Cientifico> CientificoList;
+    ListView lvReco;
+
+
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_recoleccion, container, false);
+        view = inflater.inflate(R.layout.fragment_recoleccion, container, false);
+        idR = view.findViewById(R.id.edtIdR);
+        fechaR = view.findViewById(R.id.edtFechaR);
+        comementR = view.findViewById(R.id.edtCommentR);
+        localR = view.findViewById(R.id.edtLocaR);
+        buscarR = view.findViewById(R.id.btnBuscarP);
+        btnFotoR = view.findViewById(R.id.btnTomarFotoP);
+        addR = view.findViewById(R.id.btnAddR);
+        eliminarR = view.findViewById(R.id.btnEliminarR);
+        modificarR = view.findViewById(R.id.btnModificarR);
+        fotolugarR = view.findViewById(R.id.imgFotoP);
+        lvReco = view.findViewById(R.id.lvRecoleccion);
+
+        spCientifico = view.findViewById(R.id.spCientifico);
+        maneja = new BDBalboa(getContext());
+
+        listaReco();
+
+
+        consultaListaCientifico();
+        ArrayAdapter<Cientifico> adapter1 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item,listadoCientifico);
+        //spCientifico.setAdapter(adapter1);
+
+
+        addR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()){
+                    Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
+                }else{
+                    int idre = Integer.parseInt(idR.getText().toString());
+                    maneja.addRecoleccion(idre,fechaR.getText().toString(),comementR.getText().toString(),localR.getText().toString());
+                    Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
+                    listaReco();
+                }
+            }
+        });
+        buscarR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idR.getText().toString().isEmpty()){
+                    Toast.makeText(getContext(), "Por favor rellene el ID", Toast.LENGTH_LONG).show();
+                }else{
+                  Recoleccion dato =  maneja.getRecoleccion(Integer.parseInt(idR.getText().toString()));
+                  if(dato == null){
+                      addR.setEnabled(true);
+                      eliminarR.setEnabled(false);
+                      modificarR.setEnabled(false);
+                      Toast.makeText(getContext(), "El ID no exite", Toast.LENGTH_LONG).show();
+
+                  }else{
+                      addR.setEnabled(false);
+                      eliminarR.setEnabled(true);
+                      modificarR.setEnabled(true);
+                      fechaR.setText(dato.getFecha());
+                      comementR.setText(dato.getComentario());
+                      localR.setText(dato.getLocalizacion());
+                      Toast.makeText(getContext(), "Guardado con exito", Toast.LENGTH_LONG).show();
+
+                  }
+                }
+
+            }
+        });
+        eliminarR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(maneja.deleteRecoleccion(Integer.parseInt(idR.getText().toString()))){
+                    Toast.makeText(getContext(), "La recoleccion fue Borrada", Toast.LENGTH_LONG).show();
+                    listaReco();
+                }
+                else {
+
+                    Toast.makeText(getContext(), "El ID no existe", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        modificarR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()){
+                    Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
+                }else{
+                    int idre = Integer.parseInt(idR.getText().toString());
+                    maneja.updateCientifico(idre,fechaR.getText().toString(),comementR.getText().toString(),localR.getText().toString());
+                    Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
+                    listaReco();
+                }
+            }
+        });
+
+
+
+
+
+
+
+
+        return view;
     }
+    private void consultaListaCientifico(){
+        SQLiteDatabase conn = maneja.getReadableDatabase();
+        Cientifico cientifico = null;
+        CientificoList = new ArrayList<Cientifico>();
+        Cursor cursor = conn.rawQuery("SELECT * FROM CientificoBalboa", null);
+        while (cursor.moveToNext()){
+
+            cientifico = new Cientifico();
+            cientifico.setNombre(cursor.getString(1));
+            cientifico.setRut(cursor.getInt(0));
+            cientifico.setApellido(cursor.getString(2));
+
+            Log.i("Rut: ", String.valueOf(cientifico.getRut()));
+            Log.i("Nombre:", cientifico.getNombre());
+            Log.i("Apellido: ",cientifico.getApellido());
+
+
+            CientificoList.add(cientifico);
+        }
+        obtenerLista();
+
+
+    }
+    private void obtenerLista(){
+        listadoCientifico = new ArrayList<String>();
+        listadoCientifico.add("Seleccione Cientifico");
+        for(int i=0;i<CientificoList.size();i++){
+            listadoCientifico.add(CientificoList.get(i).getNombre()+" "+CientificoList.get(i).getApellido());
+        }
+    }
+
+    private void listaReco(){
+
+        ArrayList<Recoleccion> lista = maneja.getListRecoleccion();
+        if(!lista.isEmpty()){
+            ArrayAdapter<Recoleccion> adapter = new ArrayAdapter<Recoleccion>(getContext(), android.R.layout.simple_list_item_1, lista);
+            lvReco.setAdapter(adapter);
+            lvReco.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    addR.setEnabled(false);
+                    eliminarR.setEnabled(true);
+                    modificarR.setEnabled(true);
+                    Recoleccion p = lista.get(i);
+                    int rutitem = p.getId();
+                    String rutET = String.valueOf(rutitem);
+                    idR.setText(rutET);
+                    fechaR.setText(p.getFecha());
+                    comementR.setText(p.getComentario());
+                    localR.setText(p.getLocalizacion());
+
+                }
+
+            });
+        }
+
+    }
+
 }

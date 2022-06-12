@@ -8,6 +8,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.Spinner;
 
 public class Autor extends AppCompatActivity {
 
@@ -23,6 +28,7 @@ public class Autor extends AppCompatActivity {
         inflater.inflate(R.menu.menu_autor, menu);
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

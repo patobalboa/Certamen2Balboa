@@ -6,12 +6,18 @@
 package cl.codelab.certamen2balboa;
 
 public class Cientifico {
+
+
     private int rut;
     private String nombre;
     private String apellido;
     private String sexo;
 
-
+    public Cientifico(int rut, String nombre, String apellido) {
+        this.rut = rut;
+        this.nombre = nombre;
+        this.apellido = apellido;
+    }
     public Cientifico() {
     }
 
