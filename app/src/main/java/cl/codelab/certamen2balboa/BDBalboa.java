@@ -365,7 +365,7 @@ public class BDBalboa extends SQLiteOpenHelper {
 
         if(db!=null){
             ContentValues valores = new ContentValues();
-            valores.put("_id", id);
+
             valores.put("fecha", fecha);
             //valores.put("_idplanta", idplanta);
             //valores.put("_rut",rut);
