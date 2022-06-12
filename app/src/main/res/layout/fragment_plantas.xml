@@ -64,6 +64,14 @@
                 android:layout_weight="1"
                 tools:src="@android:drawable/ic_menu_camera" />
 
+            <Button
+                android:id="@+id/btnTomarFotoP"
+                android:layout_width="23dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onLongClick"
+                android:text="Tomar Foto" />
+
         </LinearLayout>
 
         <LinearLayout

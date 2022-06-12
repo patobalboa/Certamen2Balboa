@@ -1,10 +1,15 @@
 package cl.codelab.certamen2balboa;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -17,6 +22,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.google.common.util.concurrent.ListenableFuture;
 
 
 /**
@@ -24,7 +30,7 @@ import android.widget.Toast;
  * Use the {@link PlantasF#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlantasF extends Fragment {
+public class PlantasF extends Fragment{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -65,10 +71,12 @@ public class PlantasF extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+
     View viewp;
+    Activity act_camara;
     Intent camara;
     BDBalboa manplanta;
-    Button buscarp, agregarp, eliminarp, modificarp;
+    Button buscarp, agregarp, eliminarp, modificarp, tomafoto;
     EditText idp, nombrep, nomcientp, usop;
     ListView lvPlantas;
     ImageView imgPlanta1, imgPlanta2;
@@ -89,7 +97,27 @@ public class PlantasF extends Fragment {
         usop = viewp.findViewById(R.id.edtUsoP);
         lvPlantas = viewp.findViewById(R.id.lvPlantas);
         imgPlanta1 = viewp.findViewById(R.id.imgFotoP);
+        tomafoto = viewp.findViewById(R.id.btnTomarFotoP);
         manplanta = new BDBalboa(getContext());
+        act_camara = getActivity();
+
+
+        tomafoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
+                        == PackageManager.PERMISSION_DENIED){
+                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, 1);
+                }
+                //if(intent.resolveActivity(act_camara.getPackageManager())!= null){
+                    getActivity().startActivityForResult(intent,1);
+                //    startActivityForResult(intent, 1);
+                //}
+            }
+        });
+
+
 
 
 
@@ -97,26 +125,23 @@ public class PlantasF extends Fragment {
 
         return viewp;
     }
-    public boolean onLongClick(View view){
-        int id;
-        id=view.getId();
-        switch (id){
-            case R.id.imgFotoP:
-                Toast.makeText(getContext(), "Intentando abrir camara", Toast.LENGTH_LONG).show();
-                camara = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                startActivityForResult(camara, cons);
-                Toast.makeText(getContext(), "Se abre la camara", Toast.LENGTH_LONG).show();
-                break;
-        }
-        return false;
-    }
-    public void onActivityResult(int requestCode, int resultCode, Intent datacam){
-        super.onActivityResult(requestCode, resultCode, datacam);
-        if(resultCode == Activity.RESULT_OK){
-            Bundle ext = datacam.getExtras();
-            bmp1 = (Bitmap) ext.get("datacam");
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode== Activity.RESULT_OK)
+        {
+            Bundle ext=data.getExtras();
+            Bitmap bmp1=(Bitmap)ext.get("data");
             imgPlanta1.setImageBitmap(bmp1);
-            Toast.makeText(getContext(), "Tomamos la foto", Toast.LENGTH_LONG).show();
+            Toast.makeText(getContext(), "capturamos foto", Toast.LENGTH_LONG).show();
+
         }
     }
+
+
+
+
+
+
+
 }
