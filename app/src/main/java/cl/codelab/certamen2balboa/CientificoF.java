@@ -111,7 +111,7 @@ public class CientificoF extends Fragment {
          spinner.setSelection(0);
          buscaCientifico();
 
-        //AGREGA CIENTIFICO
+        //Botones CIENTIFICO
         agregar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
