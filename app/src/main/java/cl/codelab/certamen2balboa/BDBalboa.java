@@ -343,15 +343,15 @@ public class BDBalboa extends SQLiteOpenHelper {
         Recoleccion datos= new Recoleccion();
         try{
 
-            Cursor c = db.rawQuery("SELECT * FROM RecoleccionBalboa WHERE _id="+String.valueOf(id)+"",null);
+            Cursor c = db.rawQuery("SELECT * FROM RecoleccionBalboa WHERE _id='"+id+"'",null);
             if(c.moveToFirst()){
                 //byte[] bytes = c.getBlob(c.getColumnIndex("IMAGEN"));
                 datos = new Recoleccion(c.getInt(0),c.getString(1),c.getString(4), c.getString(6) );
-                this.close();
+
                 c.close();
                 return datos;
             }else{
-                this.close();
+
                 c.close();
                 return null;
             }
@@ -359,7 +359,7 @@ public class BDBalboa extends SQLiteOpenHelper {
             return null;
         }
     }
-    public boolean updateRecoleccion(int id,String fecha, int idplanta, int rut, String comentario, byte[] foto_lugar, String localizacion){
+    public boolean updateRecoleccion(int id,String fecha, String comentario, String localizacion){
         boolean sw1 = true;
         SQLiteDatabase db= getWritableDatabase();
 
@@ -367,9 +367,9 @@ public class BDBalboa extends SQLiteOpenHelper {
             ContentValues valores = new ContentValues();
             valores.put("_id", id);
             valores.put("fecha", fecha);
-            valores.put("_idplanta", idplanta);
-            valores.put("_rut",rut);
-            valores.put("foto_lugar",foto_lugar);
+            //valores.put("_idplanta", idplanta);
+            //valores.put("_rut",rut);
+            //valores.put("foto_lugar",foto_lugar);
             valores.put("comentario",comentario);
             valores.put("localizacion",localizacion);
             try{

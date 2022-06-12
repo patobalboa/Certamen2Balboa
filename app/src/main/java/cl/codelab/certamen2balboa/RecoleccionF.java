@@ -1,7 +1,5 @@
 package cl.codelab.certamen2balboa;
 
-import android.app.Activity;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,8 +20,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -96,7 +92,7 @@ public class RecoleccionF extends Fragment {
         fechaR = view.findViewById(R.id.edtFechaR);
         comementR = view.findViewById(R.id.edtCommentR);
         localR = view.findViewById(R.id.edtLocaR);
-        buscarR = view.findViewById(R.id.btnBuscarP);
+        buscarR = view.findViewById(R.id.btnBuscarR);
         btnFotoR = view.findViewById(R.id.btnTomarFotoP);
         addR = view.findViewById(R.id.btnAddR);
         eliminarR = view.findViewById(R.id.btnEliminarR);
@@ -114,7 +110,34 @@ public class RecoleccionF extends Fragment {
         ArrayAdapter<Cientifico> adapter1 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item,listadoCientifico);
         //spCientifico.setAdapter(adapter1);
 
+        buscarR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(idR.getText().toString().isEmpty()){
+                    Toast.makeText(getContext(), "Por favor rellene el ID", Toast.LENGTH_LONG).show();
+                }else
+                {
+                    int idre = Integer.parseInt(idR.getText().toString());
+                    Recoleccion dato =  maneja.getRecoleccion(idre);
+                    if(dato == null){
+                        addR.setEnabled(true);
+                        eliminarR.setEnabled(false);
+                        modificarR.setEnabled(false);
+                        Toast.makeText(getContext(), "El ID no exite", Toast.LENGTH_LONG).show();
 
+                    }else{
+                        addR.setEnabled(false);
+                        eliminarR.setEnabled(true);
+                        modificarR.setEnabled(true);
+                        fechaR.setText(dato.getFecha());
+                        comementR.setText(dato.getComentario());
+                        localR.setText(dato.getLocalizacion());
+                        Toast.makeText(getContext(), "Guardado con exito", Toast.LENGTH_LONG).show();
+
+                    }
+                }
+            }
+        });
         addR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -128,33 +151,7 @@ public class RecoleccionF extends Fragment {
                 }
             }
         });
-        buscarR.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if(idR.getText().toString().isEmpty()){
-                    Toast.makeText(getContext(), "Por favor rellene el ID", Toast.LENGTH_LONG).show();
-                }else{
-                  Recoleccion dato =  maneja.getRecoleccion(Integer.parseInt(idR.getText().toString()));
-                  if(dato == null){
-                      addR.setEnabled(true);
-                      eliminarR.setEnabled(false);
-                      modificarR.setEnabled(false);
-                      Toast.makeText(getContext(), "El ID no exite", Toast.LENGTH_LONG).show();
 
-                  }else{
-                      addR.setEnabled(false);
-                      eliminarR.setEnabled(true);
-                      modificarR.setEnabled(true);
-                      fechaR.setText(dato.getFecha());
-                      comementR.setText(dato.getComentario());
-                      localR.setText(dato.getLocalizacion());
-                      Toast.makeText(getContext(), "Guardado con exito", Toast.LENGTH_LONG).show();
-
-                  }
-                }
-
-            }
-        });
         eliminarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -175,7 +172,7 @@ public class RecoleccionF extends Fragment {
                     Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
                 }else{
                     int idre = Integer.parseInt(idR.getText().toString());
-                    maneja.updateCientifico(idre,fechaR.getText().toString(),comementR.getText().toString(),localR.getText().toString());
+                    maneja.updateRecoleccion(idre,fechaR.getText().toString(),comementR.getText().toString(),localR.getText().toString());
                     Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
                     listaReco();
                 }
