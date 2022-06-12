@@ -5,10 +5,6 @@
 
 package cl.codelab.certamen2balboa;
 
-import androidx.annotation.NonNull;
-
-import java.util.List;
-
 public class Cientifico {
     private int rut;
     private String nombre;

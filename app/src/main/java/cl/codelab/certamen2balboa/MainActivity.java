@@ -8,17 +8,23 @@ import android.view.View;
 import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
-    Button cientifico;
+    Button btnCientifico, btnPlantas, btnRecoleccion, btnAutor;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        cientifico = findViewById(R.id.btnIrCientifico);
+        btnAutor = findViewById(R.id.btnAutor);
 
+        btnAutor.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saltarAutor(view);
+            }
+        });
     }
-    public void saltoCientifico(View view){
-        Intent intent = new Intent(this, CientificoActivity.class);
+    public void saltarAutor(View view){
+        Intent intent = new Intent(this, Autor.class);
         startActivity(intent);
     }
 }

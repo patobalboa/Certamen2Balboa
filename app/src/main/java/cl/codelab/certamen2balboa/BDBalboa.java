@@ -91,11 +91,11 @@ public class BDBalboa extends SQLiteOpenHelper {
         SQLiteDatabase db = getReadableDatabase();
         Cientifico datos= new Cientifico();
         try{
-            Cursor c = db.rawQuery("SELECT * FROM CientificoBalboa WHERE nombre='"+rut+"'",null);
+            Cursor c = db.rawQuery("SELECT * FROM CientificoBalboa WHERE _rut='"+rut+"'",null);
             if(c.moveToFirst()){
 
                 datos = new Cientifico(c.getInt(0),c.getString(1),c.getString(2), c.getString(3));
-                this.close();
+
                 c.close();
                 return datos;
             }else{

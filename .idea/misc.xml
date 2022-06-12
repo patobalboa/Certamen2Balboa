@@ -3,11 +3,13 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Virginio/Certamen2Balboa5/app/src/main/res/layout/activity_cientifico.xml" value="0.3523550724637681" />
-        <entry key="..\:/Virginio/Certamen2Balboa5/app/src/main/res/layout/activity_main.xml" value="0.3484375" />
-        <entry key="..\:/Virginio/Certamen2Balboa5/app/src/main/res/layout/fragment_anadir_cientifico.xml" value="0.3523550724637681" />
-        <entry key="..\:/Virginio/Certamen2Balboa5/app/src/main/res/layout/fragment_listar_cientifico.xml" value="0.3523550724637681" />
-        <entry key="..\:/Virginio/Certamen2Balboa5/app/src/main/res/menu/menu_cientifico.xml" value="0.3625" />
+        <entry key="..\:/Virginio/Certamen2Balboa6/app/src/main/res/layout/activity_autor.xml" value="0.3500905797101449" />
+        <entry key="..\:/Virginio/Certamen2Balboa6/app/src/main/res/layout/activity_autor2.xml" value="0.3500905797101449" />
+        <entry key="..\:/Virginio/Certamen2Balboa6/app/src/main/res/layout/activity_cientifico.xml" value="0.34148550724637683" />
+        <entry key="..\:/Virginio/Certamen2Balboa6/app/src/main/res/layout/activity_main.xml" value="0.34148550724637683" />
+        <entry key="..\:/Virginio/Certamen2Balboa6/app/src/main/res/layout/fragment_cientifico.xml" value="0.3500905797101449" />
+        <entry key="..\:/Virginio/Certamen2Balboa6/app/src/main/res/layout/fragment_plantas.xml" value="0.3500905797101449" />
+        <entry key="..\:/Virginio/Certamen2Balboa6/app/src/main/res/layout/fragment_recoleccion.xml" value="0.3500905797101449" />
       </map>
     </option>
   </component>
