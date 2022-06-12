@@ -130,7 +130,7 @@ public class PlantasF extends Fragment{
             @Override
             public void onClick(View view) {
                 int id = Integer.parseInt(idp.getText().toString());
-                if (manplanta.deleteCientifico(id)) {
+                if (manplanta.deletePlantas(id)) {
                     Toast.makeText(getContext(), "La planta fue Borrada", Toast.LENGTH_LONG).show();
                     listaPlantas();
                 } else {
@@ -176,7 +176,7 @@ public class PlantasF extends Fragment{
                 }else{
 
                     int id = Integer.parseInt(idp.getText().toString());
-                    if (manplanta.updateCientifico(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
+                    if (manplanta.updatePlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
                         Toast.makeText(getContext(), "La planta se modificó con exito", Toast.LENGTH_LONG).show();
                         listaPlantas();
                     } else {
