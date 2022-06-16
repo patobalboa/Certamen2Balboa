@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
 
@@ -238,6 +239,10 @@ public class PlantasF extends Fragment {
                     nombrep.setText(p.getNombre_p());
                     nomcientp.setText(p.getNombre_cientifico_planta());
                     usop.setText(p.getUso());
+                    if(p.getFoto()!= null) {
+                        bmp1 = BitmapFactory.decodeByteArray(p.getFoto(), 0, p.getFoto().length);
+                        imgPlanta1.setImageBitmap(bmp1);
+                    }
 
 
                 }

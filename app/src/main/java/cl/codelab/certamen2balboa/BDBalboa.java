@@ -227,7 +227,7 @@ public class BDBalboa extends SQLiteOpenHelper {
             Cursor c = db.rawQuery("SELECT * FROM PlantasBalboa WHERE _idplanta="+id+"",null);
             if(c.moveToFirst()){
                 //byte[] bytes = c.getBlob(c.getColumnIndex("IMAGEN"));
-                datos = new Plantas(c.getInt(0),c.getString(1),c.getString(2),c.getString(4));
+                datos = new Plantas(c.getInt(0),c.getString(1),c.getString(2),c.getBlob(3),c.getString(4));
 
                 c.close();
                 return datos;
