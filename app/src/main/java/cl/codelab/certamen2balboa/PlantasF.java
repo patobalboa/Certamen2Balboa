@@ -2,6 +2,8 @@ package cl.codelab.certamen2balboa;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
@@ -131,7 +133,15 @@ public class PlantasF extends Fragment {
                             Toast.makeText(getContext(), "No se pudo agregar", Toast.LENGTH_LONG).show();
                         }
                     }else {
-                        Toast.makeText(getContext(), "No agregó foto", Toast.LENGTH_LONG).show();
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("ALERTA")
+                                .setMessage("No ha agregado una foto")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                }).show();
                     }
                 }
             }
@@ -201,7 +211,15 @@ public class PlantasF extends Fragment {
                                 Toast.makeText(getContext(), "No se pudo modificar", Toast.LENGTH_LONG).show();
                             }
                     } else {
-                        Toast.makeText(getContext(), "No agregó foto", Toast.LENGTH_LONG).show();
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("ALERTA")
+                                .setMessage("No ha agregado una foto")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                }).show();
                     }
                 }
             }

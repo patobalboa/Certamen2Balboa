@@ -1,11 +1,19 @@
 package cl.codelab.certamen2balboa;
 
+import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,6 +27,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 /**
@@ -69,7 +78,7 @@ public class RecoleccionF extends Fragment{
     }
 
     View view;
-
+    Intent intent2;
     BDBalboa maneja;
     EditText idR, fechaR, comementR, localR;
     Spinner spPlanta, spCientifico;
@@ -80,6 +89,7 @@ public class RecoleccionF extends Fragment{
     ArrayList<Cientifico> CientificoList;
     ArrayList<Plantas> PlantasList;
     ListView lvReco;
+    Bitmap bmp2;
 
 
     @Override
@@ -92,11 +102,11 @@ public class RecoleccionF extends Fragment{
         comementR = view.findViewById(R.id.edtCommentR);
         localR = view.findViewById(R.id.edtLocaR);
         buscarR = view.findViewById(R.id.btnBuscarR);
-        btnFotoR = view.findViewById(R.id.btnTomarFotoP);
+        btnFotoR = view.findViewById(R.id.btnFotoLugarR);
         addR = view.findViewById(R.id.btnAddR);
         eliminarR = view.findViewById(R.id.btnEliminarR);
         modificarR = view.findViewById(R.id.btnModificarR);
-        fotolugarR = view.findViewById(R.id.imgFotoP);
+        fotolugarR = view.findViewById(R.id.imgFotoLugarR);
         lvReco = view.findViewById(R.id.lvRecoleccion);
 
         spCientifico = view.findViewById(R.id.spCientificoR);
@@ -140,6 +150,10 @@ public class RecoleccionF extends Fragment{
                         comementR.setText(dato.getComentario());
                         localR.setText(dato.getLocalizacion());
                         Toast.makeText(getContext(), "Guardado con exito", Toast.LENGTH_LONG).show();
+                        if(dato.getFoto_lugar()!= null) {
+                            bmp2 = BitmapFactory.decodeByteArray(dato.getFoto_lugar(), 0, dato.getFoto_lugar().length);
+                            fotolugarR.setImageBitmap(bmp2);
+                        }
 
                     }
                 }
@@ -148,16 +162,32 @@ public class RecoleccionF extends Fragment{
         addR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()) {
+                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty() || spPlanta.getSelectedItem().toString().equals("Seleccione Planta") || spCientifico.getSelectedItem().toString().equals("Seleccione Cientifico")) {
                     Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
                 } else {
                     int planta_id = getIdPlanta(spPlanta.getSelectedItemPosition());
                     int cientifico_id = getIdCientifico(spCientifico.getSelectedItemPosition());
 
                     int idre = Integer.parseInt(idR.getText().toString());
-                    maneja.addRecoleccion(idre, fechaR.getText().toString(), comementR.getText().toString(), localR.getText().toString());
-                    Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
-                    listaReco();
+                    if(bmp2!=null) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] byteArray = stream.toByteArray();
+                        if(maneja.addRecoleccion(idre, fechaR.getText().toString(),planta_id,cientifico_id,byteArray, comementR.getText().toString(), localR.getText().toString())) {
+                            Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
+                            listaReco();
+                        }
+                    }else{
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("ALERTA")
+                                .setMessage("No ha agregado una foto")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                }).show();
+                    }
                 }
             }
         });
@@ -177,19 +207,64 @@ public class RecoleccionF extends Fragment{
         modificarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()) {
+                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()|| spPlanta.getSelectedItem().toString().equals("Seleccione Planta") || spCientifico.getSelectedItem().toString().equals("Seleccione Cientifico")) {
                     Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
                 } else {
                     int idre = Integer.parseInt(idR.getText().toString());
-                    maneja.updateRecoleccion(idre, fechaR.getText().toString(), comementR.getText().toString(), localR.getText().toString());
-                    Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
-                    listaReco();
+                    int planta_id = getIdPlanta(spPlanta.getSelectedItemPosition());
+                    int cientifico_id = getIdCientifico(spCientifico.getSelectedItemPosition());
+                    if (bmp2 != null) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] byteArray = stream.toByteArray();
+                        if (maneja.updateRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())){
+
+                        Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
+                        listaReco();
+                        }
+                    }else{
+                        new AlertDialog.Builder(getContext())
+                                .setTitle("ALERTA")
+                                .setMessage("No ha agregado una foto")
+                                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+                                        dialogInterface.cancel();
+                                    }
+                                }).show();
+                    }
                 }
             }
         });
-
+        btnFotoR.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                abrirCamara();
+            }
+        });
 
         return view;
+    }
+    private void abrirCamara() {
+        intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent2, 1);
+        //startActivityForResult(intent, 1);
+
+    }
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == Activity.RESULT_OK) {
+            Bundle ext = data.getExtras();
+            bmp2 = (Bitmap) ext.get("data");
+            if (bmp2 != null) {
+                fotolugarR.setImageBitmap(bmp2);
+                Toast.makeText(getContext(), "capturamos foto", Toast.LENGTH_LONG).show();
+            }else {
+                Toast.makeText(getContext(), "No se pudo guardar la foto", Toast.LENGTH_LONG).show();
+            }
+
+        }
     }
 
     private int getIdPlanta(int pos){
@@ -291,6 +366,10 @@ public class RecoleccionF extends Fragment{
                     localR.setText(p.getLocalizacion());
                     spPlanta.setSelection(getPosPlanta(p.getCod_planta()));
                     spCientifico.setSelection(getPosCientifico(p.getCod_cientifico()));
+                    if(p.getFoto_lugar()!= null) {
+                        bmp2 = BitmapFactory.decodeByteArray(p.getFoto_lugar(), 0, p.getFoto_lugar().length);
+                        fotolugarR.setImageBitmap(bmp2);
+                    }
 
                 }
 

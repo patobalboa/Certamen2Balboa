@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         CientificoF = new CientificoF();
         PlantasF = new PlantasF();
         RecoleccionF = new RecoleccionF();
-        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainerView, RecoleccionF).commit();
+        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainerView, CientificoF).commit();
         btnCientifico.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

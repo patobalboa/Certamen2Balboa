@@ -5,11 +5,13 @@
 
 package cl.codelab.certamen2balboa;
 
+import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -275,7 +277,8 @@ public class BDBalboa extends SQLiteOpenHelper {
         if(db!=null){
 
 
-            try{
+            try {
+
                 String[] args= new String[]{String.valueOf(idplanta)};
                 db.delete("PlantasBalboa","_idplanta=?",args);
                 db.close();
@@ -292,7 +295,7 @@ public class BDBalboa extends SQLiteOpenHelper {
     }
 
     // Manejadores Recoleccion
-    public boolean addRecoleccion(int id,String fecha, String comentario, String localizacion){
+    public boolean addRecoleccion(int id,String fecha,int idplanta, int rut, byte[] foto_lugar, String comentario, String localizacion){
         boolean sw1 = true;
         SQLiteDatabase db= getWritableDatabase();
 
@@ -300,18 +303,21 @@ public class BDBalboa extends SQLiteOpenHelper {
             ContentValues valores = new ContentValues();
             valores.put("_id", id);
             valores.put("fecha", fecha);
-            //valores.put("_idplanta", idplanta);
-            //valores.put("_rut",rut);
-            //valores.put("foto_lugar",foto_lugar);
+            valores.put("_idplanta", idplanta);
+            valores.put("_rut",rut);
+            valores.put("foto_lugar",foto_lugar);
             valores.put("comment",comentario);
             valores.put("localizacion",localizacion);
-
-            try{
-                db.insert("RecoleccionBalboa",null,valores);
-                db.close();
-            }catch (Exception e){
-                db.close();
-                sw1=false;
+            if(getRecoleccion(id)!=null) {
+                try {
+                    db.insert("RecoleccionBalboa", null, valores);
+                    db.close();
+                } catch (Exception e) {
+                    db.close();
+                    sw1 = false;
+                }
+            }else{
+                return false;
             }
 
         }else {
@@ -359,7 +365,7 @@ public class BDBalboa extends SQLiteOpenHelper {
             return null;
         }
     }
-    public boolean updateRecoleccion(int id,String fecha, String comentario, String localizacion){
+    public boolean updateRecoleccion(int id,String fecha,int idplanta, int rut, byte[] foto_lugar, String comentario, String localizacion){
         boolean sw1 = true;
         SQLiteDatabase db= getWritableDatabase();
 
@@ -367,9 +373,9 @@ public class BDBalboa extends SQLiteOpenHelper {
             ContentValues valores = new ContentValues();
 
             valores.put("fecha", fecha);
-            //valores.put("_idplanta", idplanta);
-            //valores.put("_rut",rut);
-            //valores.put("foto_lugar",foto_lugar);
+            valores.put("_idplanta", idplanta);
+            valores.put("_rut",rut);
+            valores.put("foto_lugar",foto_lugar);
             valores.put("comment",comentario);
             valores.put("localizacion",localizacion);
             try{
