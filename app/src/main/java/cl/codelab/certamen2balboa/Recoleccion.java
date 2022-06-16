@@ -11,6 +11,16 @@ public class Recoleccion {
     private String fecha;
     private int cod_planta;
     private int cod_cientifico;
+
+    public Recoleccion(int id, String fecha, int cod_planta, int cod_cientifico, String comentario, String localizacion) {
+        this.id = id;
+        this.fecha = fecha;
+        this.cod_planta = cod_planta;
+        this.cod_cientifico = cod_cientifico;
+        this.comentario = comentario;
+        this.localizacion = localizacion;
+    }
+
     private String comentario;
     private byte[] foto_lugar;
     private String localizacion;

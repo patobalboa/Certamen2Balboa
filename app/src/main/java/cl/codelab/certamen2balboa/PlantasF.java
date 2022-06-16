@@ -8,6 +8,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 
 
+import androidx.annotation.Nullable;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
@@ -34,7 +35,7 @@ import java.util.ArrayList;
  * Use the {@link PlantasF#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class PlantasF extends Fragment{
+public class PlantasF extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -84,8 +85,9 @@ public class PlantasF extends Fragment{
     EditText idp, nombrep, nomcientp, usop;
     ListView lvPlantas;
     ImageView imgPlanta1, imgPlanta2;
-    final static int cons= 0;
+    final static int cons = 0;
     Bitmap bmp1;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -112,9 +114,9 @@ public class PlantasF extends Fragment{
         agregarp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(idp.getText().toString().isEmpty() || nombrep.toString().isEmpty()|| nomcientp.toString().isEmpty() || usop.toString().isEmpty()){
+                if (idp.getText().toString().isEmpty() || nombrep.toString().isEmpty() || nomcientp.toString().isEmpty() || usop.toString().isEmpty()) {
                     Toast.makeText(getContext(), "Debe rellenar todos los campos", Toast.LENGTH_LONG).show();
-                }else{
+                } else {
 
                     int id = Integer.parseInt(idp.getText().toString());
                     if (manplanta.addPlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
@@ -142,9 +144,9 @@ public class PlantasF extends Fragment{
         buscarp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(idp.getText().toString().isEmpty()){
+                if (idp.getText().toString().isEmpty()) {
                     Toast.makeText(getContext(), "Debe colocar un ID", Toast.LENGTH_LONG).show();
-                }else {
+                } else {
                     int id = Integer.parseInt(idp.getText().toString());
 
                     Plantas dato = manplanta.getPlantas(id);
@@ -155,7 +157,7 @@ public class PlantasF extends Fragment{
                         agregarp.setEnabled(true);
                         eliminarp.setEnabled(false);
                         modificarp.setEnabled(false);
-                        Toast.makeText(getContext(), "El ID "+ruts+" no existe", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "El ID " + ruts + " no existe", Toast.LENGTH_LONG).show();
                     } else {
                         agregarp.setEnabled(false);
                         eliminarp.setEnabled(true);
@@ -171,9 +173,9 @@ public class PlantasF extends Fragment{
         modificarp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(idp.getText().toString().isEmpty() || nombrep.toString().isEmpty()|| nomcientp.toString().isEmpty() || usop.toString().isEmpty()){
+                if (idp.getText().toString().isEmpty() || nombrep.toString().isEmpty() || nomcientp.toString().isEmpty() || usop.toString().isEmpty()) {
                     Toast.makeText(getContext(), "Debe rellenar todos los campos", Toast.LENGTH_LONG).show();
-                }else{
+                } else {
 
                     int id = Integer.parseInt(idp.getText().toString());
                     if (manplanta.updatePlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
@@ -186,48 +188,37 @@ public class PlantasF extends Fragment{
             }
         });
 
-
         tomafoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.CAMERA)
-                        == PackageManager.PERMISSION_DENIED){
-                    ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.CAMERA}, 1);
-                }
-                //if(intent.resolveActivity(act_camara.getPackageManager())!= null){
-                    getActivity().startActivityForResult(intent,1);
-                //    startActivityForResult(intent, 1);
-                //}
+                abrirCamara();
             }
         });
-
-
-
-
-
-
-
-
-
         return viewp;
     }
-    public void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
+
+    private void abrirCamara() {
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        startActivityForResult(intent, 1);
+        //startActivityForResult(intent, 1);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode== Activity.RESULT_OK)
-        {
-            Bundle ext=data.getExtras();
-            Bitmap bmp1=(Bitmap)ext.get("data");
+        if (resultCode == Activity.RESULT_OK) {
+            Bundle ext = data.getExtras();
+            bmp1 = (Bitmap) ext.get("data");
             imgPlanta1.setImageBitmap(bmp1);
             Toast.makeText(getContext(), "capturamos foto", Toast.LENGTH_LONG).show();
-
         }
     }
-    public void listaPlantas(){
+
+    public void listaPlantas() {
 
         ArrayList<Plantas> lista = manplanta.getListPlantas();
-        if(!lista.isEmpty()){
+        if (!lista.isEmpty()) {
             ArrayAdapter<Plantas> adapter = new ArrayAdapter<Plantas>(getContext(), android.R.layout.simple_list_item_1, lista);
             lvPlantas.setAdapter(adapter);
             lvPlantas.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -251,11 +242,6 @@ public class PlantasF extends Fragment{
         }
 
     }
-
-
-
-
-
 
 
 }

@@ -327,7 +327,7 @@ public class BDBalboa extends SQLiteOpenHelper {
         try{
 
             while(c.moveToNext()) {
-                Recoleccion datos = new Recoleccion(c.getInt(0), c.getString(1), c.getString(4), c.getString(6));
+                Recoleccion datos = new Recoleccion(c.getInt(0), c.getString(1),c.getInt(2),c.getInt(3), c.getString(4), c.getString(6));
                 lista.add(datos);
 
             }

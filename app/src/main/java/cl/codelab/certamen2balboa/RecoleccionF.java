@@ -26,7 +26,7 @@ import java.util.ArrayList;
  * Use the {@link RecoleccionF#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecoleccionF extends Fragment {
+public class RecoleccionF extends Fragment{
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -76,11 +76,10 @@ public class RecoleccionF extends Fragment {
     ImageView fotolugarR;
     Button buscarR, btnFotoR, addR, eliminarR, modificarR;
     String datoSpC;
-    ArrayList<String> listadoCientifico;
+    ArrayList<String> listadoCientifico, listadoPlantas;
     ArrayList<Cientifico> CientificoList;
+    ArrayList<Plantas> PlantasList;
     ListView lvReco;
-
-
 
 
     @Override
@@ -100,32 +99,40 @@ public class RecoleccionF extends Fragment {
         fotolugarR = view.findViewById(R.id.imgFotoP);
         lvReco = view.findViewById(R.id.lvRecoleccion);
 
-        spCientifico = view.findViewById(R.id.spCientifico);
+        spCientifico = view.findViewById(R.id.spCientificoR);
+        spPlanta = view.findViewById(R.id.spPlantaR);
         maneja = new BDBalboa(getContext());
 
         listaReco();
 
 
         consultaListaCientifico();
-        ArrayAdapter<Cientifico> adapter1 = new ArrayAdapter(getContext(), android.R.layout.simple_spinner_dropdown_item,listadoCientifico);
-        //spCientifico.setAdapter(adapter1);
+        consultaListaPlantas();
+
+        ArrayAdapter<String> adapter1 = new ArrayAdapter(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listadoCientifico);
+        ArrayAdapter<String> adapter2 = new ArrayAdapter(getContext(), androidx.appcompat.R.layout.support_simple_spinner_dropdown_item, listadoPlantas);
+        spCientifico.setAdapter(adapter1);
+        spPlanta.setAdapter(adapter2);
+
+
+
+
 
         buscarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(idR.getText().toString().isEmpty()){
+                if (idR.getText().toString().isEmpty()) {
                     Toast.makeText(getContext(), "Por favor rellene el ID", Toast.LENGTH_LONG).show();
-                }else
-                {
+                } else {
                     int idre = Integer.parseInt(idR.getText().toString());
-                    Recoleccion dato =  maneja.getRecoleccion(idre);
-                    if(dato == null){
+                    Recoleccion dato = maneja.getRecoleccion(idre);
+                    if (dato == null) {
                         addR.setEnabled(true);
                         eliminarR.setEnabled(false);
                         modificarR.setEnabled(false);
                         Toast.makeText(getContext(), "El ID no exite", Toast.LENGTH_LONG).show();
 
-                    }else{
+                    } else {
                         addR.setEnabled(false);
                         eliminarR.setEnabled(true);
                         modificarR.setEnabled(true);
@@ -141,11 +148,14 @@ public class RecoleccionF extends Fragment {
         addR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()){
+                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()) {
                     Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
-                }else{
+                } else {
+                    int planta_id = getIdPlanta(spPlanta.getSelectedItemPosition());
+                    int cientifico_id = getIdCientifico(spCientifico.getSelectedItemPosition());
+
                     int idre = Integer.parseInt(idR.getText().toString());
-                    maneja.addRecoleccion(idre,fechaR.getText().toString(),comementR.getText().toString(),localR.getText().toString());
+                    maneja.addRecoleccion(idre, fechaR.getText().toString(), comementR.getText().toString(), localR.getText().toString());
                     Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
                     listaReco();
                 }
@@ -155,11 +165,10 @@ public class RecoleccionF extends Fragment {
         eliminarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(maneja.deleteRecoleccion(Integer.parseInt(idR.getText().toString()))){
+                if (maneja.deleteRecoleccion(Integer.parseInt(idR.getText().toString()))) {
                     Toast.makeText(getContext(), "La recoleccion fue Borrada", Toast.LENGTH_LONG).show();
                     listaReco();
-                }
-                else {
+                } else {
 
                     Toast.makeText(getContext(), "El ID no existe", Toast.LENGTH_LONG).show();
                 }
@@ -168,11 +177,11 @@ public class RecoleccionF extends Fragment {
         modificarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()){
+                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()) {
                     Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
-                }else{
+                } else {
                     int idre = Integer.parseInt(idR.getText().toString());
-                    maneja.updateRecoleccion(idre,fechaR.getText().toString(),comementR.getText().toString(),localR.getText().toString());
+                    maneja.updateRecoleccion(idre, fechaR.getText().toString(), comementR.getText().toString(), localR.getText().toString());
                     Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
                     listaReco();
                 }
@@ -180,20 +189,33 @@ public class RecoleccionF extends Fragment {
         });
 
 
-
-
-
-
-
-
         return view;
     }
-    private void consultaListaCientifico(){
+
+    private int getIdPlanta(int pos){
+        SQLiteDatabase conn = maneja.getReadableDatabase();
+
+        Cursor cursor = conn.rawQuery("SELECT * FROM PlantasBalboa", null);
+        cursor.moveToPosition(pos-1);
+
+
+        return cursor.getInt(0);
+    }
+    private int getIdCientifico(int pos){
+        SQLiteDatabase conn = maneja.getReadableDatabase();
+
+        Cursor cursor = conn.rawQuery("SELECT * FROM CientificoBalboa", null);
+        cursor.moveToPosition(pos-1);
+
+
+        return cursor.getInt(0);
+    }
+    private void consultaListaCientifico() {
         SQLiteDatabase conn = maneja.getReadableDatabase();
         Cientifico cientifico = null;
         CientificoList = new ArrayList<Cientifico>();
         Cursor cursor = conn.rawQuery("SELECT * FROM CientificoBalboa", null);
-        while (cursor.moveToNext()){
+        while (cursor.moveToNext()) {
 
             cientifico = new Cientifico();
             cientifico.setNombre(cursor.getString(1));
@@ -202,7 +224,7 @@ public class RecoleccionF extends Fragment {
 
             Log.i("Rut: ", String.valueOf(cientifico.getRut()));
             Log.i("Nombre:", cientifico.getNombre());
-            Log.i("Apellido: ",cientifico.getApellido());
+            Log.i("Apellido: ", cientifico.getApellido());
 
 
             CientificoList.add(cientifico);
@@ -211,18 +233,47 @@ public class RecoleccionF extends Fragment {
 
 
     }
-    private void obtenerLista(){
+
+    private void obtenerLista() {
         listadoCientifico = new ArrayList<String>();
         listadoCientifico.add("Seleccione Cientifico");
-        for(int i=0;i<CientificoList.size();i++){
-            listadoCientifico.add(CientificoList.get(i).getNombre()+" "+CientificoList.get(i).getApellido());
+        for (int i = 0; i < CientificoList.size(); i++) {
+            listadoCientifico.add(CientificoList.get(i).getNombre() + " " + CientificoList.get(i).getApellido());
+
         }
     }
 
-    private void listaReco(){
+    private void consultaListaPlantas() {
+        SQLiteDatabase conn = maneja.getReadableDatabase();
+        Plantas cientifico = null;
+        PlantasList = new ArrayList<Plantas>();
+        Cursor cursor = conn.rawQuery("SELECT * FROM PlantasBalboa", null);
+        while (cursor.moveToNext()) {
+
+            cientifico = new Plantas();
+            cientifico.setId(cursor.getInt(0));
+            cientifico.setNombre_p(cursor.getString(1));
+
+            PlantasList.add(cientifico);
+        }
+        obtenerListaP();
+
+
+    }
+
+    private void obtenerListaP() {
+        listadoPlantas = new ArrayList<String>();
+        listadoPlantas.add("Seleccione Planta");
+        for (int i = 0; i < PlantasList.size(); i++) {
+            listadoPlantas.add(PlantasList.get(i).getId() + " " + PlantasList.get(i).getNombre_p());
+
+        }
+    }
+
+    private void listaReco() {
 
         ArrayList<Recoleccion> lista = maneja.getListRecoleccion();
-        if(!lista.isEmpty()){
+        if (!lista.isEmpty()) {
             ArrayAdapter<Recoleccion> adapter = new ArrayAdapter<Recoleccion>(getContext(), android.R.layout.simple_list_item_1, lista);
             lvReco.setAdapter(adapter);
             lvReco.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -238,12 +289,40 @@ public class RecoleccionF extends Fragment {
                     fechaR.setText(p.getFecha());
                     comementR.setText(p.getComentario());
                     localR.setText(p.getLocalizacion());
+                    spPlanta.setSelection(getPosPlanta(p.getCod_planta()));
+                    spCientifico.setSelection(getPosCientifico(p.getCod_cientifico()));
 
                 }
 
             });
         }
 
+    }
+    private int getPosPlanta(int pos){
+        SQLiteDatabase conn = maneja.getReadableDatabase();
+        Cursor cursor = conn.rawQuery("SELECT * FROM PlantasBalboa", null);
+        int indice = 0;
+        while (cursor.moveToNext()) {
+            if(pos == cursor.getInt(0)){
+                return indice;
+            }else {
+                indice++;
+            }
+        }
+        return indice;
+    }
+    private int getPosCientifico(int pos){
+        SQLiteDatabase conn = maneja.getReadableDatabase();
+        Cursor cursor = conn.rawQuery("SELECT * FROM CientificoBalboa", null);
+        int indice = 0;
+        while (cursor.moveToNext()) {
+            if(pos == cursor.getInt(0)){
+                return indice;
+            }else {
+                indice++;
+            }
+        }
+        return indice;
     }
 
 }
