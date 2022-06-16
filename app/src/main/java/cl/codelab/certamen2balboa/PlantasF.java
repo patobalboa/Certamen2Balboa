@@ -81,12 +81,11 @@ public class PlantasF extends Fragment {
 
     View viewp;
     Activity act_camara;
-    Intent camara;
     BDBalboa manplanta;
     Button buscarp, agregarp, eliminarp, modificarp, tomafoto;
     EditText idp, nombrep, nomcientp, usop;
     ListView lvPlantas;
-    ImageView imgPlanta1, imgPlanta2;
+    ImageView imgPlanta1;
     final static int cons = 0;
     Bitmap bmp1;
 
@@ -121,14 +120,18 @@ public class PlantasF extends Fragment {
                 } else {
 
                     int id = Integer.parseInt(idp.getText().toString());
-                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                    bmp1.compress(Bitmap.CompressFormat.PNG,100,stream);
-                    byte[] byteArray= stream.toByteArray();
-                    if (manplanta.addPlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(),byteArray, usop.getText().toString())) {
-                        Toast.makeText(getContext(), "La planta se añadió con exito", Toast.LENGTH_LONG).show();
-                        listaPlantas();
-                    } else {
-                        Toast.makeText(getContext(), "No se pudo agregar", Toast.LENGTH_LONG).show();
+                    if(bmp1!=null) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bmp1.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] byteArray = stream.toByteArray();
+                        if (manplanta.addPlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(), byteArray, usop.getText().toString())) {
+                            Toast.makeText(getContext(), "La planta se añadió con exito", Toast.LENGTH_LONG).show();
+                            listaPlantas();
+                        } else {
+                            Toast.makeText(getContext(), "No se pudo agregar", Toast.LENGTH_LONG).show();
+                        }
+                    }else {
+                        Toast.makeText(getContext(), "No agregó foto", Toast.LENGTH_LONG).show();
                     }
                 }
             }
@@ -170,6 +173,10 @@ public class PlantasF extends Fragment {
                         nombrep.setText(dato.getNombre_p());
                         nomcientp.setText(dato.getNombre_cientifico_planta());
                         usop.setText(dato.getUso());
+                        if(dato.getFoto()!= null) {
+                            bmp1 = BitmapFactory.decodeByteArray(dato.getFoto(), 0, dato.getFoto().length);
+                            imgPlanta1.setImageBitmap(bmp1);
+                        }
                     }
                 }
 
@@ -183,11 +190,18 @@ public class PlantasF extends Fragment {
                 } else {
 
                     int id = Integer.parseInt(idp.getText().toString());
-                    if (manplanta.updatePlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
-                        Toast.makeText(getContext(), "La planta se modificó con exito", Toast.LENGTH_LONG).show();
-                        listaPlantas();
+                    if(bmp1!=null) {
+                        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                        bmp1.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                        byte[] byteArray = stream.toByteArray();
+                        if (manplanta.updatePlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(),byteArray, usop.getText().toString())) {
+                                Toast.makeText(getContext(), "La planta se modificó con exito", Toast.LENGTH_LONG).show();
+                                listaPlantas();
+                            } else {
+                                Toast.makeText(getContext(), "No se pudo modificar", Toast.LENGTH_LONG).show();
+                            }
                     } else {
-                        Toast.makeText(getContext(), "No se pudo modificar", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getContext(), "No agregó foto", Toast.LENGTH_LONG).show();
                     }
                 }
             }
