@@ -34,12 +34,14 @@ public class BDBalboa extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         sqLiteDatabase.execSQL("CREATE TABLE CientificoBalboa" + "(_rut INT PRIMARY KEY, nombre TEXT, apellido TEXT, sexo TEXT)");
         sqLiteDatabase.execSQL("CREATE TABLE PlantasBalboa" +  "(_idplanta INT PRIMARY KEY, nombre_p TEXT, nombre_cientifico_planta TEXT, foto BLOB, uso_p TEXT)");
-        sqLiteDatabase.execSQL("CREATE TABLE RecoleccionBalboa" + "(_id INT PRIMARY KEY, fecha TEXT, _idplanta INT, _rut INT, comment TEXT, foto_lugar BLOB, localizacion TEXT)");
+        sqLiteDatabase.execSQL("CREATE TABLE RecoleccionBalboa" + "(_id INT PRIMARY KEY, fecha TEXT, idplanta INT, rut INT, comment TEXT, foto_lugar BLOB, localizacion TEXT)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase sqLiteDatabase, int i, int i1) {
-
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS CientificoBalboa");
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS PlantasBalboa");
+            sqLiteDatabase.execSQL("DROP TABLE IF EXISTS RecoleccionBalboa");
     }
 
 
@@ -106,8 +108,6 @@ public class BDBalboa extends SQLiteOpenHelper {
             return null;
         }
     }
-
-
     public Cientifico getCientifico(int rut){
         SQLiteDatabase db = getReadableDatabase();
         Cientifico datos= new Cientifico();
@@ -303,12 +303,12 @@ public class BDBalboa extends SQLiteOpenHelper {
             ContentValues valores = new ContentValues();
             valores.put("_id", id);
             valores.put("fecha", fecha);
-            valores.put("_idplanta", idplanta);
-            valores.put("_rut",rut);
+            valores.put("idplanta", idplanta);
+            valores.put("rut",rut);
             valores.put("foto_lugar",foto_lugar);
             valores.put("comment",comentario);
             valores.put("localizacion",localizacion);
-            if(getRecoleccion(id)!=null) {
+
                 try {
                     db.insert("RecoleccionBalboa", null, valores);
                     db.close();
@@ -316,9 +316,7 @@ public class BDBalboa extends SQLiteOpenHelper {
                     db.close();
                     sw1 = false;
                 }
-            }else{
-                return false;
-            }
+
 
         }else {
             onCreate(db);
@@ -333,7 +331,7 @@ public class BDBalboa extends SQLiteOpenHelper {
         try{
 
             while(c.moveToNext()) {
-                Recoleccion datos = new Recoleccion(c.getInt(0), c.getString(1),c.getInt(2),c.getInt(3), c.getString(4), c.getString(6));
+                Recoleccion datos = new Recoleccion(c.getInt(0), c.getString(1),c.getInt(2),c.getInt(3), c.getString(4),c.getBlob(5), c.getString(6));
                 lista.add(datos);
 
             }
@@ -352,7 +350,7 @@ public class BDBalboa extends SQLiteOpenHelper {
             Cursor c = db.rawQuery("SELECT * FROM RecoleccionBalboa WHERE _id='"+id+"'",null);
             if(c.moveToFirst()){
                 //byte[] bytes = c.getBlob(c.getColumnIndex("IMAGEN"));
-                datos = new Recoleccion(c.getInt(0),c.getString(1),c.getString(4), c.getString(6) );
+                datos = new Recoleccion(c.getInt(0),c.getString(1),c.getInt(2),c.getInt(3),c.getString(4),c.getBlob(5), c.getString(6) );
 
                 c.close();
                 return datos;
@@ -373,8 +371,8 @@ public class BDBalboa extends SQLiteOpenHelper {
             ContentValues valores = new ContentValues();
 
             valores.put("fecha", fecha);
-            valores.put("_idplanta", idplanta);
-            valores.put("_rut",rut);
+            valores.put("idplanta", idplanta);
+            valores.put("rut",rut);
             valores.put("foto_lugar",foto_lugar);
             valores.put("comment",comentario);
             valores.put("localizacion",localizacion);

@@ -213,14 +213,17 @@ public class RecoleccionF extends Fragment{
                     int idre = Integer.parseInt(idR.getText().toString());
                     int planta_id = getIdPlanta(spPlanta.getSelectedItemPosition());
                     int cientifico_id = getIdCientifico(spCientifico.getSelectedItemPosition());
+
                     if (bmp2 != null) {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byte[] byteArray = stream.toByteArray();
                         if (maneja.updateRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())){
 
-                        Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
-                        listaReco();
+                             Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
+                             listaReco();
+                        }else {
+                            Toast.makeText(getContext(), "No se modifico nada", Toast.LENGTH_LONG).show();
                         }
                     }else{
                         new AlertDialog.Builder(getContext())
@@ -257,10 +260,12 @@ public class RecoleccionF extends Fragment{
         if (resultCode == Activity.RESULT_OK) {
             Bundle ext = data.getExtras();
             bmp2 = (Bitmap) ext.get("data");
+            Log.i("BITMAP: ",String.valueOf(bmp2));
             if (bmp2 != null) {
                 fotolugarR.setImageBitmap(bmp2);
                 Toast.makeText(getContext(), "capturamos foto", Toast.LENGTH_LONG).show();
             }else {
+
                 Toast.makeText(getContext(), "No se pudo guardar la foto", Toast.LENGTH_LONG).show();
             }
 
@@ -364,8 +369,8 @@ public class RecoleccionF extends Fragment{
                     fechaR.setText(p.getFecha());
                     comementR.setText(p.getComentario());
                     localR.setText(p.getLocalizacion());
-                    spPlanta.setSelection(getPosPlanta(p.getCod_planta()));
-                    spCientifico.setSelection(getPosCientifico(p.getCod_cientifico()));
+                    spPlanta.setSelection(getPosPlanta(p.getCod_planta()+1));
+                    spCientifico.setSelection(getPosCientifico(p.getCod_cientifico()+1));
                     if(p.getFoto_lugar()!= null) {
                         bmp2 = BitmapFactory.decodeByteArray(p.getFoto_lugar(), 0, p.getFoto_lugar().length);
                         fotolugarR.setImageBitmap(bmp2);
