@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.google.common.util.concurrent.ListenableFuture;
 
+import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 
 
@@ -119,7 +120,10 @@ public class PlantasF extends Fragment {
                 } else {
 
                     int id = Integer.parseInt(idp.getText().toString());
-                    if (manplanta.addPlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(), usop.getText().toString())) {
+                    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                    bmp1.compress(Bitmap.CompressFormat.PNG,100,stream);
+                    byte[] byteArray= stream.toByteArray();
+                    if (manplanta.addPlantas(id, nombrep.getText().toString(), nomcientp.getText().toString(),byteArray, usop.getText().toString())) {
                         Toast.makeText(getContext(), "La planta se añadió con exito", Toast.LENGTH_LONG).show();
                         listaPlantas();
                     } else {

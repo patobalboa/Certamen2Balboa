@@ -177,7 +177,7 @@ public class BDBalboa extends SQLiteOpenHelper {
     }
 
     // Manejadores Plantas
-    public boolean addPlantas(int idplanta, String nombre_p, String nombre_cientifico_planta, String uso_p){
+    public boolean addPlantas(int idplanta, String nombre_p, String nombre_cientifico_planta,byte[] foto, String uso_p){
         boolean sw1 = true;
         SQLiteDatabase db= getWritableDatabase();
 
@@ -186,7 +186,7 @@ public class BDBalboa extends SQLiteOpenHelper {
             valores.put("_idplanta", idplanta);
             valores.put("nombre_p", nombre_p);
             valores.put("nombre_cientifico_planta",nombre_cientifico_planta);
-            //valores.put("foto",foto);
+            valores.put("foto",foto);
             valores.put("uso_p",uso_p);
 
             try{
