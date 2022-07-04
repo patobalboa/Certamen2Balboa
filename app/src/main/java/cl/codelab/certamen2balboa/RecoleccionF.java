@@ -1,16 +1,29 @@
 package cl.codelab.certamen2balboa;
 
+import static android.content.Context.LOCATION_SERVICE;
+
+import android.Manifest;
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.provider.MediaStore;
@@ -35,7 +48,7 @@ import java.util.ArrayList;
  * Use the {@link RecoleccionF#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class RecoleccionF extends Fragment{
+public class RecoleccionF extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -83,13 +96,15 @@ public class RecoleccionF extends Fragment{
     EditText idR, fechaR, comementR, localR;
     Spinner spPlanta, spCientifico;
     ImageView fotolugarR;
-    Button buscarR, btnFotoR, addR, eliminarR, modificarR;
+    Button buscarR, btnFotoR, addR, eliminarR, modificarR, bGPS;
     String datoSpC;
     ArrayList<String> listadoCientifico, listadoPlantas;
     ArrayList<Cientifico> CientificoList;
     ArrayList<Plantas> PlantasList;
     ListView lvReco;
     Bitmap bmp2;
+    Location location;
+    LocationManager locationManager;
 
 
     @Override
@@ -108,7 +123,7 @@ public class RecoleccionF extends Fragment{
         modificarR = view.findViewById(R.id.btnModificarR);
         fotolugarR = view.findViewById(R.id.imgFotoLugarR);
         lvReco = view.findViewById(R.id.lvRecoleccion);
-
+        bGPS = view.findViewById(R.id.btnGPS);
         spCientifico = view.findViewById(R.id.spCientificoR);
         spPlanta = view.findViewById(R.id.spPlantaR);
         maneja = new BDBalboa(getContext());
@@ -124,10 +139,13 @@ public class RecoleccionF extends Fragment{
         spCientifico.setAdapter(adapter1);
         spPlanta.setAdapter(adapter2);
 
-
-
-
-
+        bGPS.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.S)
+            @Override
+            public void onClick(View view) {
+                getGPS();
+            }
+        });
         buscarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -150,7 +168,7 @@ public class RecoleccionF extends Fragment{
                         comementR.setText(dato.getComentario());
                         localR.setText(dato.getLocalizacion());
                         Toast.makeText(getContext(), "Guardado con exito", Toast.LENGTH_LONG).show();
-                        if(dato.getFoto_lugar()!= null) {
+                        if (dato.getFoto_lugar() != null) {
                             bmp2 = BitmapFactory.decodeByteArray(dato.getFoto_lugar(), 0, dato.getFoto_lugar().length);
                             fotolugarR.setImageBitmap(bmp2);
                         }
@@ -169,15 +187,15 @@ public class RecoleccionF extends Fragment{
                     int cientifico_id = getIdCientifico(spCientifico.getSelectedItemPosition());
 
                     int idre = Integer.parseInt(idR.getText().toString());
-                    if(bmp2!=null) {
+                    if (bmp2 != null) {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byte[] byteArray = stream.toByteArray();
-                        if(maneja.addRecoleccion(idre, fechaR.getText().toString(),planta_id,cientifico_id,byteArray, comementR.getText().toString(), localR.getText().toString())) {
+                        if (maneja.addRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())) {
                             Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
                             listaReco();
                         }
-                    }else{
+                    } else {
                         new AlertDialog.Builder(getContext())
                                 .setTitle("ALERTA")
                                 .setMessage("No ha agregado una foto")
@@ -207,7 +225,7 @@ public class RecoleccionF extends Fragment{
         modificarR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty()|| spPlanta.getSelectedItem().toString().equals("Seleccione Planta") || spCientifico.getSelectedItem().toString().equals("Seleccione Cientifico")) {
+                if (idR.toString().isEmpty() || fechaR.toString().isEmpty() || comementR.toString().isEmpty() || localR.toString().isEmpty() || spPlanta.getSelectedItem().toString().equals("Seleccione Planta") || spCientifico.getSelectedItem().toString().equals("Seleccione Cientifico")) {
                     Toast.makeText(getContext(), "Por favor rellene los datos", Toast.LENGTH_LONG).show();
                 } else {
                     int idre = Integer.parseInt(idR.getText().toString());
@@ -218,14 +236,14 @@ public class RecoleccionF extends Fragment{
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byte[] byteArray = stream.toByteArray();
-                        if (maneja.updateRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())){
+                        if (maneja.updateRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())) {
 
-                             Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
-                             listaReco();
-                        }else {
+                            Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
+                            listaReco();
+                        } else {
                             Toast.makeText(getContext(), "No se modifico nada", Toast.LENGTH_LONG).show();
                         }
-                    }else{
+                    } else {
                         new AlertDialog.Builder(getContext())
                                 .setTitle("ALERTA")
                                 .setMessage("No ha agregado una foto")
@@ -248,23 +266,25 @@ public class RecoleccionF extends Fragment{
 
         return view;
     }
+
     private void abrirCamara() {
         intent2 = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         startActivityForResult(intent2, 1);
         //startActivityForResult(intent, 1);
 
     }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == Activity.RESULT_OK) {
             Bundle ext = data.getExtras();
             bmp2 = (Bitmap) ext.get("data");
-            Log.i("BITMAP: ",String.valueOf(bmp2));
+            Log.i("BITMAP: ", String.valueOf(bmp2));
             if (bmp2 != null) {
                 fotolugarR.setImageBitmap(bmp2);
                 Toast.makeText(getContext(), "capturamos foto", Toast.LENGTH_LONG).show();
-            }else {
+            } else {
 
                 Toast.makeText(getContext(), "No se pudo guardar la foto", Toast.LENGTH_LONG).show();
             }
@@ -272,24 +292,26 @@ public class RecoleccionF extends Fragment{
         }
     }
 
-    private int getIdPlanta(int pos){
+    private int getIdPlanta(int pos) {
         SQLiteDatabase conn = maneja.getReadableDatabase();
 
         Cursor cursor = conn.rawQuery("SELECT * FROM PlantasBalboa", null);
-        cursor.moveToPosition(pos-1);
+        cursor.moveToPosition(pos - 1);
 
 
         return cursor.getInt(0);
     }
-    private int getIdCientifico(int pos){
+
+    private int getIdCientifico(int pos) {
         SQLiteDatabase conn = maneja.getReadableDatabase();
 
         Cursor cursor = conn.rawQuery("SELECT * FROM CientificoBalboa", null);
-        cursor.moveToPosition(pos-1);
+        cursor.moveToPosition(pos - 1);
 
 
         return cursor.getInt(0);
     }
+
     private void consultaListaCientifico() {
         SQLiteDatabase conn = maneja.getReadableDatabase();
         Cientifico cientifico = null;
@@ -369,9 +391,9 @@ public class RecoleccionF extends Fragment{
                     fechaR.setText(p.getFecha());
                     comementR.setText(p.getComentario());
                     localR.setText(p.getLocalizacion());
-                    spPlanta.setSelection(getPosPlanta(p.getCod_planta()+1));
-                    spCientifico.setSelection(getPosCientifico(p.getCod_cientifico()+1));
-                    if(p.getFoto_lugar()!= null) {
+                    spPlanta.setSelection(getPosPlanta(p.getCod_planta() + 1));
+                    spCientifico.setSelection(getPosCientifico(p.getCod_cientifico() + 1));
+                    if (p.getFoto_lugar() != null) {
                         bmp2 = BitmapFactory.decodeByteArray(p.getFoto_lugar(), 0, p.getFoto_lugar().length);
                         fotolugarR.setImageBitmap(bmp2);
                     }
@@ -382,31 +404,93 @@ public class RecoleccionF extends Fragment{
         }
 
     }
-    private int getPosPlanta(int pos){
+
+    private int getPosPlanta(int pos) {
         SQLiteDatabase conn = maneja.getReadableDatabase();
         Cursor cursor = conn.rawQuery("SELECT * FROM PlantasBalboa", null);
         int indice = 0;
         while (cursor.moveToNext()) {
-            if(pos == cursor.getInt(0)){
+            if (pos == cursor.getInt(0)) {
                 return indice;
-            }else {
+            } else {
                 indice++;
             }
         }
         return indice;
     }
-    private int getPosCientifico(int pos){
+
+    private int getPosCientifico(int pos) {
         SQLiteDatabase conn = maneja.getReadableDatabase();
         Cursor cursor = conn.rawQuery("SELECT * FROM CientificoBalboa", null);
         int indice = 0;
         while (cursor.moveToNext()) {
-            if(pos == cursor.getInt(0)){
+            if (pos == cursor.getInt(0)) {
                 return indice;
-            }else {
+            } else {
                 indice++;
             }
         }
         return indice;
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    public void getGPS() {
+        locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            alerta_GPS();
+        }
+        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) getContext(), new String[]
+                    {
+                            Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION}, 1);
+        };
+        locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 10, 1, new LocationListener() {
+            @Override
+            public void onLocationChanged(@NonNull Location location) {
+                localR.setText(String.valueOf(location.getLongitude()) +","+String.valueOf(location.getLatitude()));
+            }
+
+            @Override
+            public void onProviderDisabled(@NonNull String provider) {
+                LocationListener.super.onProviderDisabled(provider);
+                Toast.makeText(getContext(),"GPS DESACTIVADO \n ACTIVELO",Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onProviderEnabled(@NonNull String provider) {
+                LocationListener.super.onProviderEnabled(provider);
+            }
+        });
+    }
+    @RequiresApi(api = Build.VERSION_CODES.S)
+    @Override
+    public void onResume() {
+        super.onResume();
+        getGPS();
+    }
+    public void alerta_GPS(){
+        new AlertDialog.Builder(getContext())
+                .setTitle("Activar GPS")
+                .setMessage("¿El GPS esta desactivado  ¿Desea Activarlo??")
+
+                .setPositiveButton("YES",
+                        new DialogInterface.OnClickListener() {
+                            @TargetApi(11)
+                            public void onClick(DialogInterface dialog, int id) {
+                                startActivity(new Intent(android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS));/*Abre App para Activa el GPS*/
+                                //dialog.cancel();
+                            }
+                        })
+                .setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                    @TargetApi(11)
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                }).show();
+
+    }
+
 
 }

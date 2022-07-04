@@ -7,6 +7,8 @@ import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,6 +30,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Base64;
 
 public class MainActivity extends AppCompatActivity {
     Fragment CientificoF, PlantasF, RecoleccionF;
@@ -100,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
             getCientificoapi.execute();
             transaccion = getSupportFragmentManager().beginTransaction();
             transaccion.replace(R.id.fragmentContainerView, CientificoF);
-            transaccion.addToBackStack(nussssssssll);
+            transaccion.addToBackStack(null);
             transaccion.commit();
             return true;
         }else if(item.getItemId()==R.id.apiP){
@@ -170,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
     }
     private class getPlantasAPI extends AsyncTask<Void, Void, String> {
         String json_GetString;
-
+        BDBalboa mantt = new BDBalboa(getBaseContext());
 
         @Override
         protected String doInBackground(Void... voids) {
@@ -197,10 +200,24 @@ public class MainActivity extends AppCompatActivity {
                 bufferedReader.close();
                 inputStream.close();
                 httpURLConnection.disconnect();
+                JSONArray jsonArray = new JSONArray(stringBuffer.toString().trim());
+                JSONObject jsonObject;
 
+                for(int i = 0; i< jsonArray.length();i++) {
+                    jsonObject = jsonArray.getJSONObject(i);
+                    String id = jsonObject.getString("id_planta");
+                    String nom = jsonObject.getString("nombre_p");
+                    String nomc = jsonObject.getString("nombre_cientifico_p");
+                    String foto = jsonObject.getString("foto");
+                    String uso = jsonObject.getString("uso_p");
+                    byte[] decodeString = Base64.getDecoder().decode(foto);
+                    Bitmap bmp2 = BitmapFactory.decodeByteArray(decodeString,0,decodeString.length);
+
+                    mantt.addPlantas(Integer.parseInt(id), nom, nomc, decodeString, uso);
+                }
                 return stringBuffer.toString().trim();
 
-            } catch (IOException e) {
+            } catch (IOException | JSONException e) {
                 e.printStackTrace();
             }
             return null;

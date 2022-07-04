@@ -84,17 +84,31 @@
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:text="Tomar Foto Lugar" />
+
         </LinearLayout>
 
-        <EditText
-            android:id="@+id/edtLocaR"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:ems="10"
-            android:enabled="true"
-            android:inputType="textPersonName"
-            android:minHeight="48dp"
-            android:text="Sin Localización" />
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnGPS"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GPS" />
+
+            <EditText
+                android:id="@+id/edtLocaR"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:ems="10"
+                android:enabled="true"
+                android:inputType="textPersonName"
+                android:minHeight="48dp"
+                android:text="Sin Localización" />
+
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
