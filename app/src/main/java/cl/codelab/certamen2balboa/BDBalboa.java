@@ -341,7 +341,6 @@ public class BDBalboa extends SQLiteOpenHelper {
             return null;
         }
     }
-
     public Recoleccion getRecoleccion(int id){
         SQLiteDatabase db = getReadableDatabase();
         Recoleccion datos= new Recoleccion();
