@@ -41,9 +41,15 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.io.ByteArrayOutputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -197,6 +203,8 @@ public class RecoleccionF extends Fragment {
                         byte[] byteArray = stream.toByteArray();
                         if (maneja.addRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())) {
                             Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
+                            postRecAPI p = new postRecAPI();
+                            p.execute();
                             listaReco();
                         }
                     } else {
@@ -503,7 +511,7 @@ public class RecoleccionF extends Fragment {
         protected Boolean doInBackground(String... params) {
 
             try {
-                url = new URL("http://www.codeplus.cl/recoleccion/add");
+                url = new URL("http://www.codeplus.cl:8000/recoleccion/add");
 
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 
@@ -521,11 +529,36 @@ public class RecoleccionF extends Fragment {
             int idcient = getIdCientifico(spCientifico.getSelectedItemPosition());
             String comm = comementR.getText().toString();
             String gps = localR.getText().toString();
-            HttpURLConnection httpURLConnection =
-            return null;
+                JSONObject jsonObject = new JSONObject();
+                jsonObject.put("id",id);
+                jsonObject.put("fecha", fecha);
+                jsonObject.put("planta", idplanta);
+                jsonObject.put("rut",idcient);
+                jsonObject.put("comment", comm);
+
+                jsonObject.put("localizacion", gps);
+
+                DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
+                wr.writeBytes(jsonObject.toString());
+                wr.flush();
+                wr.close();
+                if(urlConnection.getResponseCode()==200){
+                    Log.i("Que pasó: ", "OK");
+                    return true;
+                }else{
+                    Log.i("Que pasó: ", jsonObject.toString());
+                    return false;
+                }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
+            return null;
         }
     }
 
