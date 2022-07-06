@@ -17,6 +17,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONArray;
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if(item.getItemId()==R.id.apiC) {
+        if (item.getItemId() == R.id.apiC) {
             getCientificoAPI getCientificoapi = new getCientificoAPI();
             getCientificoapi.execute();
             transaccion = getSupportFragmentManager().beginTransaction();
@@ -106,13 +107,16 @@ public class MainActivity extends AppCompatActivity {
             transaccion.addToBackStack(null);
             transaccion.commit();
             return true;
-        }else if(item.getItemId()==R.id.apiP){
+        } else if (item.getItemId() == R.id.apiP) {
             getPlantasAPI getPlantasapi = new getPlantasAPI();
             getPlantasapi.execute();
             return true;
-        }else{
+        } else if (item.getItemId() == R.id.mapaID) {
+            startActivity(new Intent(MainActivity.this, MapsActivity.class));
+        } else {
             return false;
         }
+        return false;
     }
     private class getCientificoAPI extends AsyncTask<Void, Void, String> {
         String json_GetString;
@@ -210,10 +214,10 @@ public class MainActivity extends AppCompatActivity {
                     String nomc = jsonObject.getString("nombre_cientifico_p");
                     String foto = jsonObject.getString("foto");
                     String uso = jsonObject.getString("uso_p");
-                    byte[] decodeString = Base64.getDecoder().decode(foto);
-                    Bitmap bmp2 = BitmapFactory.decodeByteArray(decodeString,0,decodeString.length);
+                    //byte[] decodeString = Base64.getDecoder().decode(foto);
+                    //Bitmap bmp2 = BitmapFactory.decodeByteArray(decodeString,0,decodeString.length);
 
-                    mantt.addPlantas(Integer.parseInt(id), nom, nomc, decodeString, uso);
+                    mantt.addPlantas(Integer.parseInt(id), nom, nomc, null, uso);
                 }
                 return stringBuffer.toString().trim();
 
@@ -234,4 +238,5 @@ public class MainActivity extends AppCompatActivity {
             super.onPostExecute(result);
         }
     }
+
 }

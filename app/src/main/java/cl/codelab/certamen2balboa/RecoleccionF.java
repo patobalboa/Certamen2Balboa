@@ -16,6 +16,7 @@ import android.graphics.BitmapFactory;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -41,6 +42,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -490,6 +494,39 @@ public class RecoleccionF extends Fragment {
                     }
                 }).show();
 
+    }
+    private class postRecAPI extends AsyncTask<String,String,Boolean> {
+        View view;
+        EditText id;
+        URL url;
+        @Override
+        protected Boolean doInBackground(String... params) {
+
+            try {
+                url = new URL("http://www.codeplus.cl/recoleccion/add");
+
+            HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+
+
+            urlConnection.setDoInput(true);
+            urlConnection.setDoOutput(true);
+
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+
+            urlConnection.setRequestMethod("POST");
+
+            String id =idR.getText().toString();
+            String fecha = fechaR.getText().toString();
+            int idplanta = getIdPlanta(spPlanta.getSelectedItemPosition());
+            int idcient = getIdCientifico(spCientifico.getSelectedItemPosition());
+            String comm = comementR.getText().toString();
+            String gps = localR.getText().toString();
+            HttpURLConnection httpURLConnection =
+            return null;
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 

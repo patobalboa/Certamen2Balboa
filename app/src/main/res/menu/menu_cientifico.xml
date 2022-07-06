@@ -7,4 +7,7 @@
     <item
         android:id="@+id/apiP"
         android:title="Obtener Plantas" />
+    <item
+        android:id="@+id/mapaID"
+        android:title="Mapa" />
 </menu>
