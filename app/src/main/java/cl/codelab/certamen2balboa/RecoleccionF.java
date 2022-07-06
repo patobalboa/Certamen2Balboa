@@ -13,6 +13,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -39,6 +40,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -103,6 +105,7 @@ public class RecoleccionF extends Fragment {
     View view;
     Intent intent2;
     BDBalboa maneja;
+    TextView estado;
     EditText idR, fechaR, comementR, localR;
     Spinner spPlanta, spCientifico;
     ImageView fotolugarR;
@@ -137,6 +140,7 @@ public class RecoleccionF extends Fragment {
         spCientifico = view.findViewById(R.id.spCientificoR);
         spPlanta = view.findViewById(R.id.spPlantaR);
         maneja = new BDBalboa(getContext());
+        estado = view.findViewById(R.id.txvEstado);
 
         listaReco();
 
@@ -559,6 +563,18 @@ public class RecoleccionF extends Fragment {
                 e.printStackTrace();
             }
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            if(aBoolean){
+                estado.setText("Guardado Remoto con exito");
+                estado.setTextColor(Color.GREEN);
+            }else{
+                estado.setText("Guardado Remoto Fallido");
+                estado.setTextColor(Color.RED);
+            }
         }
     }
 
