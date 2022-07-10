@@ -115,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
             getPlantasapi.execute();
             return true;
         } else if (item.getItemId() == R.id.mapaID) {
-            startActivity(new Intent(MainActivity.this, MapsActivity.class));
+            startActivity(new Intent(MainActivity.this, MapsActivity2.class));
         } else {
             return false;
         }
