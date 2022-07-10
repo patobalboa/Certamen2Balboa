@@ -3,8 +3,10 @@ package cl.codelab.certamen2balboa;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
@@ -31,6 +33,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 
 public class MainActivity extends AppCompatActivity {
@@ -50,7 +53,7 @@ public class MainActivity extends AppCompatActivity {
         PlantasF = new PlantasF();
         RecoleccionF = new RecoleccionF();
 
-        getSupportFragmentManager().beginTransaction().add(R.id.fragmentContainerView, CientificoF).commit();
+        getSupportFragmentManager().beginTransaction().commit();
         btnCientifico.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -214,10 +217,11 @@ public class MainActivity extends AppCompatActivity {
                     String nomc = jsonObject.getString("nombre_cientifico_p");
                     String foto = jsonObject.getString("foto");
                     String uso = jsonObject.getString("uso_p");
-                    //byte[] decodeString = Base64.getDecoder().decode(foto);
-                    //Bitmap bmp2 = BitmapFactory.decodeByteArray(decodeString,0,decodeString.length);
+                    Base64.getDecoder().decode(new String(foto).getBytes(StandardCharsets.UTF_8));
 
-                    mantt.addPlantas(Integer.parseInt(id), nom, nomc, null, uso);
+
+
+                    mantt.addPlantas(Integer.parseInt(id), nom, nomc, Base64.getDecoder().decode(new String(foto).getBytes(StandardCharsets.UTF_8)), uso);
                 }
                 return stringBuffer.toString().trim();
 
@@ -236,6 +240,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
+
         }
     }
 

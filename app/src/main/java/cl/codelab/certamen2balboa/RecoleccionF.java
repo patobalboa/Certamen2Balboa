@@ -53,7 +53,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -118,6 +120,8 @@ public class RecoleccionF extends Fragment {
     Bitmap bmp2;
     Location location;
     LocationManager locationManager;
+    Recoleccion recoleccion;
+    byte[] byteArray;
 
 
     @Override
@@ -141,6 +145,7 @@ public class RecoleccionF extends Fragment {
         spPlanta = view.findViewById(R.id.spPlantaR);
         maneja = new BDBalboa(getContext());
         estado = view.findViewById(R.id.txvEstado);
+        recoleccion = new Recoleccion();
 
         listaReco();
 
@@ -204,12 +209,13 @@ public class RecoleccionF extends Fragment {
                     if (bmp2 != null) {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                        byte[] byteArray = stream.toByteArray();
+                        byteArray = stream.toByteArray();
                         if (maneja.addRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())) {
                             Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
+                            listaReco();
                             postRecAPI p = new postRecAPI();
                             p.execute();
-                            listaReco();
+
                         }
                     } else {
                         new AlertDialog.Builder(getContext())
@@ -464,7 +470,9 @@ public class RecoleccionF extends Fragment {
         locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 10, 1, new LocationListener() {
             @Override
             public void onLocationChanged(@NonNull Location location) {
-                localR.setText(String.valueOf(location.getLongitude()) +","+String.valueOf(location.getLatitude()));
+                DecimalFormat df = new DecimalFormat();
+                df.setMaximumFractionDigits(4);
+                localR.setText(String.valueOf(df.format(location.getLongitude()))+","+String.valueOf(df.format(location.getLatitude())));
             }
 
             @Override
@@ -539,7 +547,7 @@ public class RecoleccionF extends Fragment {
                 jsonObject.put("planta", idplanta);
                 jsonObject.put("rut",idcient);
                 jsonObject.put("comment", comm);
-
+                jsonObject.put("foto", Base64.getEncoder().encodeToString(byteArray));
                 jsonObject.put("localizacion", gps);
 
                 DataOutputStream wr = new DataOutputStream(urlConnection.getOutputStream());
