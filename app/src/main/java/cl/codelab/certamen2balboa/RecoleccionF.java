@@ -404,7 +404,7 @@ public class RecoleccionF extends Fragment {
         }
     }
 
-    private void listaReco() {
+    public void listaReco() {
 
         ArrayList<Recoleccion> lista = maneja.getListRecoleccion();
         if (!lista.isEmpty()) {

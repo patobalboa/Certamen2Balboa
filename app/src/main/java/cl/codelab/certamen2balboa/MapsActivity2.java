@@ -103,7 +103,7 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
                         .snippet(
                         "Fecha: "+n.getFecha()+"" +
                                 "\nRecolector: "+nom_cientifico+"" +
-                                "\nNombre Cientifico: "+plantas.getNombre_cientifico_planta()+"" +
+                                "\nNombre Cientifico: "+plantas.getNombre_cientifico_planta()+"l" +
                                 "\nComentario: "+n.getComentario()+"" +
                                 "\nFoto Lugar: \n"+BitmapFactory.decodeByteArray(n.getFoto_lugar(),0,n.getFoto_lugar().length)
                 ));
