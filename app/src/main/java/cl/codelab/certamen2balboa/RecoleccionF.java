@@ -63,6 +63,7 @@ import java.util.Locale;
 
 import android.location.Geocoder;
 
+import com.google.android.gms.common.util.NumberUtils;
 
 
 /**
@@ -219,7 +220,7 @@ public class RecoleccionF extends Fragment {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byteArray = stream.toByteArray();
-                        if (maneja.addRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())) {
+                        if (maneja.addRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), recoleccion.getLocalizacion())) {
                             Toast.makeText(getContext(), "Se ingresaron los datos", Toast.LENGTH_LONG).show();
                             listaReco();
                             postRecAPI p = new postRecAPI();
@@ -267,7 +268,7 @@ public class RecoleccionF extends Fragment {
                         ByteArrayOutputStream stream = new ByteArrayOutputStream();
                         bmp2.compress(Bitmap.CompressFormat.PNG, 100, stream);
                         byte[] byteArray = stream.toByteArray();
-                        if (maneja.updateRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), localR.getText().toString())) {
+                        if (maneja.updateRecoleccion(idre, fechaR.getText().toString(), planta_id, cientifico_id, byteArray, comementR.getText().toString(), recoleccion.getLocalizacion())) {
 
                             Toast.makeText(getContext(), "Se modificaron los datos", Toast.LENGTH_LONG).show();
                             listaReco();
@@ -421,7 +422,20 @@ public class RecoleccionF extends Fragment {
                     idR.setText(rutET);
                     fechaR.setText(p.getFecha());
                     comementR.setText(p.getComentario());
-                    localR.setText(p.getLocalizacion());
+                    String[] latlon = p.getLocalizacion().split(",");
+                    Geocoder geocoder = new Geocoder(getContext(),Locale.getDefault());
+                    try {
+
+                        direccion = geocoder.getFromLocation(Double.valueOf(latlon[1]),Double.valueOf(latlon[0]),1);
+                    } catch (IOException e ) {
+                        e.printStackTrace();
+                    }
+                    if(direccion==null){
+                        localR.setText(p.getLocalizacion());
+                    }else{
+                        localR.setText(direccion.get(0).getAddressLine(0));
+                    }
+
                     spPlanta.setSelection(getPosPlanta(p.getCod_planta() + 1));
                     spCientifico.setSelection(getPosCientifico(p.getCod_cientifico() + 1));
                     if (p.getFoto_lugar() != null) {
@@ -481,10 +495,10 @@ public class RecoleccionF extends Fragment {
             public void onLocationChanged(@NonNull Location location) {
                 DecimalFormat df = new DecimalFormat();
                 df.setMaximumFractionDigits(4);
-                Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
+                Geocoder gcd = new Geocoder(getActivity(), Locale.getDefault());
                 recoleccion.setLocalizacion(String.valueOf(df.format(location.getLongitude()))+","+String.valueOf(df.format(location.getLatitude())));
                 try {
-                    direccion = gcd.getFromLocation(location.getLatitude(), location.getLongitude(),1);
+                   direccion = gcd.getFromLocation(location.getLatitude(), location.getLongitude(),1);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -557,6 +571,8 @@ public class RecoleccionF extends Fragment {
             urlConnection.setRequestProperty("Content-Type", "application/json");
 
             urlConnection.setRequestMethod("POST");
+                DecimalFormat df = new DecimalFormat();
+                df.setMaximumFractionDigits(4);
 
             String id =idR.getText().toString();
             String fecha = fechaR.getText().toString();

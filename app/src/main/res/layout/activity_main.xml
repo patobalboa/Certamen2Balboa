@@ -31,7 +31,7 @@
         android:id="@+id/btnCientifico"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:text="Cientificos"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,28 +41,28 @@
         android:id="@+id/btnPlantas"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="13dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="48dp"
         android:text="Plantas"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.06"
         app:layout_constraintStart_toEndOf="@+id/btnCientifico"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/btnRecoleccion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
+        android:layout_marginStart="4dp"
         android:layout_marginTop="12dp"
         android:text="Recolección"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/btnPlantas"
         app:layout_constraintTop_toBottomOf="@+id/textView" />
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/fragmentContainerView"
         android:name="cl.codelab.certamen2balboa.CientificoF"
-        android:layout_width="398dp"
-        android:layout_height="536dp"
+        android:layout_width="384dp"
+        android:layout_height="529dp"
         android:layout_marginStart="4dp"
         android:layout_marginTop="100dp"
         app:layout_constraintStart_toStartOf="parent"

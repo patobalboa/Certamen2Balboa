@@ -109,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
             transaccion.replace(R.id.fragmentContainerView, CientificoF);
             transaccion.addToBackStack(null);
             transaccion.commit();
+
             return true;
         } else if (item.getItemId() == R.id.apiP) {
             getPlantasAPI getPlantasapi = new getPlantasAPI();
@@ -116,7 +117,11 @@ public class MainActivity extends AppCompatActivity {
             return true;
         } else if (item.getItemId() == R.id.mapaID) {
             startActivity(new Intent(MainActivity.this, MapsActivity2.class));
-        } else {
+        }else if(item.getItemId()== R.id.apiR){
+            getRecoleccionApi getRecoleccionApi = new getRecoleccionApi();
+            getRecoleccionApi.execute();
+        }
+            else {
             return false;
         }
         return false;
@@ -175,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             super.onPostExecute(result);
-            Log.i("JSON GET",result);
+
         }
     }
     private class getPlantasAPI extends AsyncTask<Void, Void, String> {
@@ -222,6 +227,73 @@ public class MainActivity extends AppCompatActivity {
 
 
                     mantt.addPlantas(Integer.parseInt(id), nom, nomc, Base64.getDecoder().decode(new String(foto).getBytes(StandardCharsets.UTF_8)), uso);
+                }
+                return stringBuffer.toString().trim();
+
+            } catch (IOException | JSONException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+
+
+        @Override
+        protected void onPostExecute(String result) {
+            super.onPostExecute(result);
+
+        }
+    }
+    private class getRecoleccionApi extends AsyncTask<Void, Void, String> {
+        String json_GetString;
+        BDBalboa mantt = new BDBalboa(getBaseContext());
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            URL url = null;
+
+            try {
+                url = new URL("http://www.codeplus.cl:8000/recoleccion");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+            try {
+                assert url != null;
+                HttpURLConnection httpURLConnection = (HttpURLConnection) url.openConnection();
+                InputStream inputStream = httpURLConnection.getInputStream();
+                BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(inputStream));
+
+                StringBuffer stringBuffer = new StringBuffer();
+
+
+                while ((json_GetString = bufferedReader.readLine()) != null){
+                    stringBuffer.append(json_GetString).append("\n");
+                }
+                bufferedReader.close();
+                inputStream.close();
+                httpURLConnection.disconnect();
+                JSONArray jsonArray = new JSONArray(stringBuffer.toString().trim());
+                JSONObject jsonObject;
+
+                for(int i = 0; i< jsonArray.length();i++) {
+                    jsonObject = jsonArray.getJSONObject(i);
+                    String id = jsonObject.getString("id");
+                    String fecha = jsonObject.getString("fecha");
+                    String idp = jsonObject.getString("id_planta");
+                    String rut = jsonObject.getString("rut_c");
+                    String comm = jsonObject.getString("comment");
+                    String foto = jsonObject.getString("foto_lugar");
+                    String loca = jsonObject.getString("localizacion");
+                    Base64.getDecoder().decode(new String(foto).getBytes(StandardCharsets.UTF_8));
+
+
+
+                    mantt.addRecoleccion(Integer.parseInt(id), fecha, Integer.parseInt(idp), Integer.parseInt(rut), Base64.getDecoder().decode(new String(foto).getBytes(StandardCharsets.UTF_8)),comm,loca);
                 }
                 return stringBuffer.toString().trim();
 
