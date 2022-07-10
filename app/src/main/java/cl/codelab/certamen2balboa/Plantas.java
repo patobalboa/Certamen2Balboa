@@ -13,6 +13,10 @@ public class Plantas {
     private byte[] foto;
     private String uso;
 
+    public Plantas(byte[] foto) {
+        this.foto = foto;
+    }
+
     public Plantas(int id, String nombre_p, String nombre_cientifico_planta, String uso) {
         this.id = id;
         this.nombre_p = nombre_p;

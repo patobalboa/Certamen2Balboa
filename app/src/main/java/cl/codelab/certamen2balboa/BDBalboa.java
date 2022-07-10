@@ -5,16 +5,13 @@
 
 package cl.codelab.certamen2balboa;
 
-import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class BDBalboa extends SQLiteOpenHelper {
 
@@ -233,6 +230,26 @@ public class BDBalboa extends SQLiteOpenHelper {
 
                 c.close();
                 return datos;
+            }else{
+
+                c.close();
+                return null;
+            }
+        }catch (Exception e){
+            return null;
+        }
+    }
+    public byte[] getPlantasFoto(int id){
+        SQLiteDatabase db = getReadableDatabase();
+        Plantas datos= new Plantas();
+        try{
+            Cursor c = db.rawQuery("SELECT foto FROM PlantasBalboa WHERE _idplanta="+id+"",null);
+            if(c.moveToFirst()){
+                //byte[] bytes = c.getBlob(c.getColumnIndex("IMAGEN"));
+                datos = new Plantas(c.getBlob(0));
+                byte[] foto = datos.getFoto();
+                c.close();
+                return foto;
             }else{
 
                 c.close();
