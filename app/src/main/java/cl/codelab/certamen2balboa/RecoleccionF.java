@@ -6,6 +6,7 @@ import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,6 +15,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Address;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -56,6 +58,12 @@ import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
+import java.util.Locale;
+
+import android.location.Geocoder;
+
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -122,6 +130,7 @@ public class RecoleccionF extends Fragment {
     LocationManager locationManager;
     Recoleccion recoleccion;
     byte[] byteArray;
+    List<Address> direccion;
 
 
     @Override
@@ -472,7 +481,21 @@ public class RecoleccionF extends Fragment {
             public void onLocationChanged(@NonNull Location location) {
                 DecimalFormat df = new DecimalFormat();
                 df.setMaximumFractionDigits(4);
-                localR.setText(String.valueOf(df.format(location.getLongitude()))+","+String.valueOf(df.format(location.getLatitude())));
+                Geocoder gcd = new Geocoder(getContext(), Locale.getDefault());
+                recoleccion.setLocalizacion(String.valueOf(df.format(location.getLongitude()))+","+String.valueOf(df.format(location.getLatitude())));
+                try {
+                    direccion = gcd.getFromLocation(location.getLatitude(), location.getLongitude(),1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(!direccion.isEmpty()){
+                    localR.setText(direccion.get(0).getAddressLine(0));
+                }else{
+                    localR.setText(String.valueOf(df.format(location.getLongitude()))+","+String.valueOf(df.format(location.getLatitude())));
+                }
+
+
+
             }
 
             @Override
@@ -540,7 +563,7 @@ public class RecoleccionF extends Fragment {
             int idplanta = getIdPlanta(spPlanta.getSelectedItemPosition());
             int idcient = getIdCientifico(spCientifico.getSelectedItemPosition());
             String comm = comementR.getText().toString();
-            String gps = localR.getText().toString();
+            String gps = recoleccion.getLocalizacion();
                 JSONObject jsonObject = new JSONObject();
                 jsonObject.put("id",id);
                 jsonObject.put("fecha", fecha);
