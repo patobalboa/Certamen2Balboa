@@ -6,12 +6,6 @@
 package cl.codelab.certamen2balboa;
 
 import android.content.Context;
-import android.location.Address;
-import android.location.Geocoder;
-
-import java.io.IOException;
-import java.util.List;
-import java.util.Locale;
 
 public class Recoleccion {
     private Context context;
@@ -109,10 +103,7 @@ public class Recoleccion {
         this.localizacion = localizacion;
     }
 
-    public String toString(Context context) throws IOException {
-        String[] direccion = getLocalizacion().split(",");
-        Geocoder geocoder = new Geocoder(context, Locale.getDefault());
-        List<Address> addresses = geocoder.getFromLocation(Double.parseDouble(direccion[1]), Double.parseDouble(direccion[0]), 1);
-        return fecha +" "+ addresses.get(0).getAddressLine(0);
+    public String toString()  {
+        return getFecha() + " " + getComentario();
     }
 }

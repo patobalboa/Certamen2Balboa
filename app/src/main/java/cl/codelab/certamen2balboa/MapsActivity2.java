@@ -72,19 +72,7 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
         //mMap.addMarker(new MarkerOptions().position(sydney).title("Marcador en Laja"));
         mMap.moveCamera(CameraUpdateFactory.zoomTo(12.0f));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.setInfoWindowAdapter(new GoogleMap.InfoWindowAdapter() {
-            @Nullable
-            @Override
-            public View getInfoWindow(@NonNull Marker marker) {
-                return null;
-            }
-
-            @Nullable
-            @Override
-            public View getInfoContents(@NonNull Marker marker) {
-                return null;
-            }
-        });
+        mMap.setInfoWindowAdapter( new CustomInfoWindowAdapter(MapsActivity2.this));
         lista.forEach((n) -> {
 
                 String[] gps = n.getLocalizacion().split(",");
@@ -104,8 +92,7 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
                         "Fecha: "+n.getFecha()+"" +
                                 "\nRecolector: "+nom_cientifico+"" +
                                 "\nNombre Cientifico: "+plantas.getNombre_cientifico_planta()+"l" +
-                                "\nComentario: "+n.getComentario()+"" +
-                                "\nFoto Lugar: \n"+BitmapFactory.decodeByteArray(n.getFoto_lugar(),0,n.getFoto_lugar().length)
+                                "\nComentario: "+n.getComentario()+"."
                 ));
                 POLILINEA.add(new LatLng(Double.parseDouble(gps[1]), Double.parseDouble(gps[0])));
         });
