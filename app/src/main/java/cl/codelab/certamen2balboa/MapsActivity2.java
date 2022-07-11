@@ -1,3 +1,8 @@
+/*
+  Autor: Patricio Balboa
+  Rut: 17.592.019-6
+ */
+
 package cl.codelab.certamen2balboa;
 
 import androidx.annotation.NonNull;
@@ -91,7 +96,7 @@ public class MapsActivity2 extends FragmentActivity implements OnMapReadyCallbac
                         .snippet(
                         "Fecha: "+n.getFecha()+"" +
                                 "\nRecolector: "+nom_cientifico+"" +
-                                "\nNombre Cientifico: "+plantas.getNombre_cientifico_planta()+"l" +
+                                "\nNombre Cientifico: "+plantas.getNombre_cientifico_planta()+
                                 "\nComentario: "+n.getComentario()+"."
                 ));
                 POLILINEA.add(new LatLng(Double.parseDouble(gps[1]), Double.parseDouble(gps[0])));

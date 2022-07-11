@@ -1,3 +1,7 @@
+/*
+  Autor: Patricio Balboa
+  Rut: 17.592.019-6
+ */
 package cl.codelab.certamen2balboa;
 
 import android.Manifest;
